@@ -3,248 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fund Performance Benchmark | 2025</title>
+    <title>Fund Performance Benchmark</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        'deep-space': '#0F091E',
-                        'midnight': '#1A1230',
-                        'purple-accent': '#764DD5',
-                        'light-purple': '#C0A8FF',
-                        'teal-highlight': '#5EEAD4', // teal-300
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        body { 
-            background: radial-gradient(circle at top right, #251845, #0F091E);
-            color: #E0E7FF;
-            min-height: 100vh;
-        }
-        .glass-card { 
-            background: rgba(30, 20, 60, 0.4); 
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(192, 168, 255, 0.1); 
-            border-radius: 20px; 
-            padding: 1.75rem;
-            transition: transform 0.3s ease, border-color 0.3s ease;
+        body { background: #1A1230; font-family: 'Inter', sans-serif; color: #E0E7FF; }
+        .glass-card {
+            background: rgba(44, 26, 82, 0.4);
+            border: 1px solid rgba(75, 45, 130, 0.6);
+            border-radius: 16px;
+            padding: 1.5rem;
+            height: 100%;
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
         }
         .glass-card:hover {
-            border-color: rgba(192, 168, 255, 0.3);
             transform: translateY(-2px);
+            border-color: rgba(192, 168, 255, 0.8);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
         }
-        .table-header-row { 
-            background: rgba(118, 77, 213, 0.15); 
-            font-family: 'Outfit', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-size: 0.75rem;
-        }
-        .top-row-highlight {
-            color: #5EEAD4 !important;
-            font-weight: 700 !important;
-        }
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0F091E;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3B2A63;
-            border-radius: 10px;
-        }
+        .text-light-purple { color: #C0A8FF; }
+        .table-header { background: rgba(118, 77, 213, 0.2); font-weight: 600; color: #C0A8FF; }
+        table { table-layout: fixed; }
+        tbody tr { transition: background-color 0.15s ease; cursor: default; }
+        tbody tr:hover { background-color: rgba(192, 168, 255, 0.1) !important; }
     </style>
 </head>
-<body class="p-4 md:p-12">
-    <div class="max-w-6xl mx-auto space-y-10">
-        <!-- Header Section -->
-        <header class="text-center space-y-2">
-            <h1 class="text-5xl font-extrabold text-light-purple font-display tracking-tight">Fund Benchmark Snapshot</h1>
-            <p id="nav-date" class="mt-2 text-xl opacity-60">31 December 2025</p>
+
+<body class="p-8">
+    <div class="max-w-6xl mx-auto space-y-8">
+        <header class="text-center">
+            <h1 class="text-5xl font-extrabold text-light-purple">Fund Benchmark Snapshot</h1>
+            <p id="nav-date" class="mt-2 text-xl opacity-60"></p>
         </header>
 
-        <!-- Insights Frame -->
-        <div class="glass-card border-l-4 border-l-purple-accent">
-            <h3 class="text-xs font-bold uppercase tracking-widest text-light-purple mb-4">INSIGHTS</h3>
-            <div id="insights-content" class="text-lg opacity-90 leading-relaxed font-normal">
-                Symbiotics Emerging Credit was the monthly performance leader with a return of 0.89%, outperforming the second-best performer by 33 bps. responsAbility Micro and SME was the YTD leader at 6.71%, maintaining a 52 bps lead margin over Symbiotics Emerging Credit.
-            </div>
-        </div>
-
-        <!-- Row 1: Monthly & YTD -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="glass-card">
-                <h3 class="text-xl font-bold mb-5 text-light-purple font-display">Monthly Performance</h3>
-                <table class="w-full text-left">
-                    <thead><tr class="table-header-row"><th class="p-3 rounded-l-lg">Fund</th><th class="p-3 text-right rounded-r-lg">Return</th></tr></thead>
-                    <tbody class="divide-y divide-white/5">
-                        <tr class="top-row-highlight"><td class="p-3">Symbiotics Emerging Credit</td><td class="p-3 text-right">0.89%</td></tr>
-                        <tr><td class="p-3">BlueOrchard Microfinance</td><td class="p-3 text-right">0.56%</td></tr>
-                        <tr><td class="p-3">responsAbility Micro and SME</td><td class="p-3 text-right">0.47%</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="glass-card">
-                <h3 class="text-xl font-bold mb-5 text-light-purple font-display">Year-to-Date (YTD)</h3>
-                <table class="w-full text-left">
-                    <thead><tr class="table-header-row"><th class="p-3 rounded-l-lg">Fund</th><th class="p-3 text-right rounded-r-lg">Return</th></tr></thead>
-                    <tbody class="divide-y divide-white/5">
-                        <tr class="top-row-highlight"><td class="p-3">responsAbility Micro and SME</td><td class="p-3 text-right">6.71%</td></tr>
-                        <tr><td class="p-3">BlueOrchard Microfinance</td><td class="p-3 text-right">6.30%</td></tr>
-                        <tr><td class="p-3">Symbiotics Emerging Credit</td><td class="p-3 text-right">6.19%</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Row 2: Annualised & AUM -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="glass-card">
-                <h3 class="text-xl font-bold mb-5 text-light-purple font-display">Annualised Performance</h3>
-                <table class="w-full text-left">
-                    <thead><tr class="table-header-row"><th class="p-3 rounded-l-lg">Fund</th><th class="p-3 text-right rounded-r-lg">Return</th></tr></thead>
-                    <tbody class="divide-y divide-white/5">
-                        <tr class="top-row-highlight"><td class="p-3">responsAbility Micro and SME</td><td class="p-3 text-right">4.49%</td></tr>
-                        <tr><td class="p-3">BlueOrchard Microfinance</td><td class="p-3 text-right">4.41%</td></tr>
-                        <tr><td class="p-3">Symbiotics Emerging Credit</td><td class="p-3 text-right">3.52%</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="glass-card">
-                <h3 class="text-xl font-bold mb-5 text-light-purple font-display">Fund Size (AuM)</h3>
-                <table class="w-full text-left">
-                    <thead><tr class="table-header-row"><th class="p-3 rounded-l-lg">Fund</th><th class="p-3 text-right rounded-r-lg">AuM</th></tr></thead>
-                    <tbody class="divide-y divide-white/5">
-                        <tr class="top-row-highlight"><td class="p-3">BlueOrchard Microfinance</td><td class="p-3 text-right">$3,198.7m</td></tr>
-                        <tr><td class="p-3">responsAbility Micro and SME</td><td class="p-3 text-right">$621.7m</td></tr>
-                        <tr><td class="p-3">Symbiotics Emerging Credit</td><td class="p-3 text-right">$55.2m</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Row 3: Volatility & WAD -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="glass-card">
-                <h3 class="text-xl font-bold mb-5 text-light-purple font-display">Volatility</h3>
-                <table class="w-full text-left">
-                    <thead><tr class="table-header-row"><th class="p-3 rounded-l-lg">Fund</th><th class="p-3 text-right rounded-r-lg">Vol.</th></tr></thead>
-                    <tbody class="divide-y divide-white/5">
-                        <tr class="top-row-highlight"><td class="p-3">BlueOrchard Microfinance</td><td class="p-3 text-right">0.49%</td></tr>
-                        <tr><td class="p-3">responsAbility Micro and SME</td><td class="p-3 text-right">0.78%</td></tr>
-                        <tr><td class="p-3">Symbiotics Emerging Credit</td><td class="p-3 text-right">0.88%</td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="glass-card">
-                <h3 class="text-xl font-bold mb-5 text-light-purple font-display">Weight Average Duration</h3>
-                <table class="w-full text-left">
-                    <thead><tr class="table-header-row"><th class="p-3 rounded-l-lg">Fund</th><th class="p-3 text-right rounded-r-lg">WAD</th></tr></thead>
-                    <tbody class="divide-y divide-white/5">
-                        <tr class="top-row-highlight"><td class="p-3">Symbiotics Emerging Credit</td><td class="p-3 text-right">1.96y</td></tr>
-                        <tr><td class="p-3">BlueOrchard Microfinance</td><td class="p-3 text-right">2.14y</td></tr>
-                        <tr><td class="p-3">responsAbility Micro and SME</td><td class="p-3 text-right">2.20y</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Row 4: Diversification -->
         <div class="glass-card">
-            <h3 class="text-xl font-bold mb-5 text-light-purple font-display">Diversification</h3>
+            <h3 class="text-xl font-semibold mb-4 text-light-purple">INSIGHTS</h3>
+            <div id="insights-s1" class="text-lg opacity-90 leading-relaxed font-normal"></div>
+            <div class="border-t border-white/10 my-4"></div>
+            <div id="insights-s2" class="text-lg opacity-90 leading-relaxed font-normal"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-card">
+                <h3 class="text-xl font-semibold mb-4 text-light-purple">Monthly Performance</h3>
+                <table class="w-full text-left">
+                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
+                    <tbody id="monthly-body" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+            <div class="glass-card">
+                <h3 class="text-xl font-semibold mb-4 text-light-purple">Year-to-Date (YTD)</h3>
+                <table class="w-full text-left">
+                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
+                    <tbody id="ytd-body" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-card">
+                <h3 class="text-xl font-semibold mb-4 text-light-purple">Annualised Performance</h3>
+                <table class="w-full text-left">
+                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
+                    <tbody id="annual-body" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+            <div class="glass-card">
+                <h3 class="text-xl font-semibold mb-4 text-light-purple">Fund Size (AuM)</h3>
+                <table class="w-full text-left">
+                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">AuM</th></tr></thead>
+                    <tbody id="aum-body" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-card">
+                <h3 class="text-xl font-semibold mb-4 text-light-purple">Volatility</h3>
+                <table class="w-full text-left">
+                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Vol.</th></tr></thead>
+                    <tbody id="vol-body" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+            <div class="glass-card">
+                <h3 class="text-xl font-semibold mb-4 text-light-purple">Weighted Average Duration (WAD)</h3>
+                <table class="w-full text-left">
+                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">WAD</th></tr></thead>
+                    <tbody id="wad-body" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h3 class="text-xl font-semibold mb-4 text-light-purple">Total Expense Ratio (TER)</h3>
+            <table class="w-full text-left">
+                <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">TER</th></tr></thead>
+                <tbody id="ter-body" class="divide-y divide-white/5"></tbody>
+            </table>
+        </div>
+
+        <div class="glass-card">
+            <h3 class="text-xl font-semibold mb-4 text-light-purple">Diversification</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
-                    <thead>
-                        <tr class="table-header-row">
-                            <th class="p-4 rounded-l-lg">Fund</th>
-                            <th class="p-4">Investments</th>
-                            <th class="p-4 text-right rounded-r-lg">Countries</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-white/5">
-                        <tr>
-                            <td class="p-4 font-semibold">responsAbility Micro and SME</td>
-                            <td class="p-4">174</td>
-                            <td class="p-4 text-right">56</td>
-                        </tr>
-                        <tr>
-                            <td class="p-4 font-semibold">BlueOrchard Microfinance</td>
-                            <td class="p-4">160</td>
-                            <td class="p-4 text-right">51</td>
-                        </tr>
-                        <tr>
-                            <td class="p-4 font-semibold">Symbiotics Emerging Credit</td>
-                            <td class="p-4">90</td>
-                            <td class="p-4 text-right">42</td>
-                        </tr>
-                    </tbody>
+                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2">Investments</th><th class="p-2 text-right">Countries</th></tr></thead>
+                    <tbody id="div-body" class="divide-y divide-white/5"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Row 5: Top Exposure -->
         <div class="glass-card">
-            <h3 class="text-xl font-bold mb-5 text-light-purple font-display">Top Exposure</h3>
+            <h3 class="text-xl font-semibold mb-4 text-light-purple">Top Country Allocation</h3>
             <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead>
-                        <tr class="table-header-row">
-                            <th class="p-4 rounded-l-lg">Rank</th>
-                            <th class="p-4">BlueOrchard Microfinance</th>
-                            <th class="p-4">responsAbility Micro and SME</th>
-                            <th class="p-4 rounded-r-lg">Symbiotics Emerging Credit</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-white/5">
-                        <tr>
-                            <td class="p-4 font-bold text-light-purple">Top Exposure 1</td>
-                            <td class="p-4">India 10.3%</td>
-                            <td class="p-4">India 9.6%</td>
-                            <td class="p-4">India 9.3%</td>
-                        </tr>
-                        <tr>
-                            <td class="p-4 font-bold text-light-purple">Top Exposure 2</td>
-                            <td class="p-4">Georgia 7.9%</td>
-                            <td class="p-4">Turkey 6.7%</td>
-                            <td class="p-4">Mexico 6.6%</td>
-                        </tr>
-                        <tr>
-                            <td class="p-4 font-bold text-light-purple">Top Exposure 3</td>
-                            <td class="p-4">Uzbekistan 6.3%</td>
-                            <td class="p-4">Georgia 6.7%</td>
-                            <td class="p-4">Mongolia 5.6%</td>
-                        </tr>
-                    </tbody>
+                <table class="w-full text-left border-collapse">
+                    <thead id="country-thead" class="table-header"></thead>
+                    <tbody id="country-tbody" class="divide-y divide-white/5"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Data Disclaimer (Manual Placement per instruction) -->
-        <div class="pt-12 pb-6 text-[11px] opacity-60 text-center border-t border-white/10 leading-relaxed">
+        <footer class="mt-12 text-[11px] opacity-60 text-center border-t border-white/10 pt-8 leading-relaxed">
             <p class="font-bold mb-2">Data disclaimer:</p>
             <p>The figures and information shown above are based exclusively on publicly available data. This page does not contain any confidential, proprietary, or non-public information. The content is provided for informational purposes only and does not constitute investment advice. Past performance is not indicative of future results.</p>
-        </div>
+        </footer>
     </div>
 
+    <script type="application/json" id="payload">
+    {"nav_date":"Reporting date: 31 December 2025","insights_s1":"Symbiotics Emerging Credit was the monthly performance leader with a lead margin of 33 bps over BlueOrchard Microfinance.","insights_s2":"responsAbility Micro and SME is the year to date leader with a lead margin of 52 bps over Symbiotics Emerging Credit.","tables":{"monthly":{"best_fund":"Symbiotics Emerging Credit","items":[{"fund":"Symbiotics Emerging Credit","value":"0.89%"},{"fund":"BlueOrchard Microfinance","value":"0.56%"},{"fund":"responsAbility Micro and SME","value":"0.47%"},{"fund":"ASN Microkredietfonds R","value":"0.10%"}]},"ytd":{"best_fund":"responsAbility Micro and SME","items":[{"fund":"responsAbility Micro and SME","value":"6.71%"},{"fund":"BlueOrchard Microfinance","value":"6.30%"},{"fund":"Symbiotics Emerging Credit","value":"6.19%"},{"fund":"ASN Microkredietfonds R","value":"-3.06%"}]},"annual":{"best_fund":"responsAbility Micro and SME","items":[{"fund":"responsAbility Micro and SME","value":"4.49%"},{"fund":"BlueOrchard Microfinance","value":"4.41%"},{"fund":"Symbiotics Emerging Credit","value":"3.52%"},{"fund":"ASN Microkredietfonds R","value":"1.28%"}]},"aum":{"best_fund":"BlueOrchard Microfinance","items":[{"fund":"BlueOrchard Microfinance","value":"$3,198.7m"},{"fund":"responsAbility Micro and SME","value":"$621.7m"},{"fund":"ASN Microkredietfonds R","value":"EUR 173.7m"},{"fund":"Symbiotics Emerging Credit","value":"$55.2m"}]},"vol":{"best_fund":"BlueOrchard Microfinance","items":[{"fund":"BlueOrchard Microfinance","value":"0.49%"},{"fund":"responsAbility Micro and SME","value":"0.78%"},{"fund":"Symbiotics Emerging Credit","value":"0.88%"},{"fund":"ASN Microkredietfonds R","value":"n.a."}]},"wad":{"best_fund":"ASN Microkredietfonds R","items":[{"fund":"ASN Microkredietfonds R","value":"14.5mo"},{"fund":"Symbiotics Emerging Credit","value":"23.5mo"},{"fund":"BlueOrchard Microfinance","value":"25.7mo"},{"fund":"responsAbility Micro and SME","value":"26.4mo"}]},"ter":{"best_fund":"Symbiotics Emerging Credit","items":[{"fund":"Symbiotics Emerging Credit","value":"0.96%"},{"fund":"responsAbility Micro and SME","value":"1.25%"},{"fund":"BlueOrchard Microfinance","value":"1.34%"},{"fund":"ASN Microkredietfonds R","value":"2.30%"}]},"div":{"items":[{"fund":"responsAbility Micro and SME","investments":"174","countries":"56"},{"fund":"BlueOrchard Microfinance","investments":"160","countries":"51"},{"fund":"Symbiotics Emerging Credit","investments":"90","countries":"42"},{"fund":"ASN Microkredietfonds R","investments":"n.a.","countries":"n.a."}]},"top_country":{"funds":["BlueOrchard Microfinance","responsAbility Micro and SME","Symbiotics Emerging Credit","ASN Microkredietfonds R"],"rows":[{"label":"Top Country 1","values":["India (10.3%)","India (9.6%)","India (9.3%)",""]},{"label":"Top Country 2","values":["Georgia (7.9%)","Turkey (6.7%)","Mexico (6.6%)",""]},{"label":"Top Country 3","values":["Uzbekistan (6.3%)","Georgia (6.7%)","Mongolia (5.6%)",""]}]}}}
+    </script>
+
     <script>
-        // Data logic notes: 
-        // WAD converted from months to years: 
-        // Symbiotics: 23.5/12 = 1.96y
-        // BlueOrchard: 25.7/12 = 2.14y
-        // responsAbility: 26.4/12 = 2.20y
-        
-        // Sorting logic implemented via hardcoded sorted arrays per instructions.
+    (function () {
+      const HILITE = "text-teal-300 font-bold";
+      const HILITE_TABLES = new Set(["monthly","ytd","annual","aum","vol","wad","ter"]);
+
+      function parsePayload() {
+        const el = document.getElementById("payload");
+        if (!el) throw new Error("Missing #payload");
+        return JSON.parse(el.textContent);
+      }
+
+      function setText(id, value) {
+        const el = document.getElementById(id);
+        if (!el) throw new Error("Missing #" + id);
+        el.textContent = value ?? "";
+      }
+
+      function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+
+      function mkTd(text, className, titleText) {
+        const td = document.createElement("td");
+        td.className = className;
+        td.textContent = text ?? "";
+        if (titleText) td.title = titleText;
+        return td;
+      }
+
+      function renderTwoCol(tbodyId, items, bestFund, tableKey) {
+        const tbody = document.getElementById(tbodyId);
+        clear(tbody);
+
+        (items || []).forEach((it, idx) => {
+          const tr = document.createElement("tr");
+
+          if (HILITE_TABLES.has(tableKey) && idx === 0) tr.className = HILITE;
+          if (bestFund && it.fund === bestFund && HILITE_TABLES.has(tableKey)) {
+            tr.className = tr.className ? (tr.className + " " + HILITE) : HILITE;
+          }
+
+          tr.appendChild(mkTd(it.fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
+          tr.appendChild(mkTd(it.value, "p-2 text-right tabular-nums", it.value));
+          tbody.appendChild(tr);
+        });
+      }
+
+      function renderDiversification(items) {
+        const tbody = document.getElementById("div-body");
+        clear(tbody);
+
+        (items || []).forEach(it => {
+          const tr = document.createElement("tr");
+          tr.appendChild(mkTd(it.fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
+          tr.appendChild(mkTd(it.investments, "p-2 tabular-nums", it.investments));
+          tr.appendChild(mkTd(it.countries, "p-2 text-right tabular-nums", it.countries));
+          tbody.appendChild(tr);
+        });
+      }
+
+      function renderTopCountry(tc) {
+        const thead = document.getElementById("country-thead");
+        const tbody = document.getElementById("country-tbody");
+        clear(thead); clear(tbody);
+
+        const trh = document.createElement("tr");
+        trh.appendChild(mkTd("Fund", "p-2"));
+        trh.appendChild(mkTd("Top Country 1", "p-2"));
+        trh.appendChild(mkTd("Top Country 2", "p-2"));
+        trh.appendChild(mkTd("Top Country 3", "p-2"));
+        thead.appendChild(trh);
+
+        const funds = tc?.funds || [];
+        const v1 = tc?.rows?.[0]?.values || [];
+        const v2 = tc?.rows?.[1]?.values || [];
+        const v3 = tc?.rows?.[2]?.values || [];
+
+        funds.forEach((fund, i) => {
+          const tr = document.createElement("tr");
+          tr.appendChild(mkTd(fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", fund));
+          tr.appendChild(mkTd(v1[i] ?? "", "p-2", v1[i] ?? ""));
+          tr.appendChild(mkTd(v2[i] ?? "", "p-2", v2[i] ?? ""));
+          tr.appendChild(mkTd(v3[i] ?? "", "p-2", v3[i] ?? ""));
+          tbody.appendChild(tr);
+        });
+      }
+
+      const p = parsePayload();
+
+      setText("nav-date", p.nav_date || "");
+      setText("insights-s1", p.insights_s1 || "");
+      setText("insights-s2", p.insights_s2 || "");
+
+      renderTwoCol("monthly-body", p.tables?.monthly?.items, p.tables?.monthly?.best_fund, "monthly");
+      renderTwoCol("ytd-body",     p.tables?.ytd?.items,     p.tables?.ytd?.best_fund,     "ytd");
+      renderTwoCol("annual-body",  p.tables?.annual?.items,  p.tables?.annual?.best_fund,  "annual");
+      renderTwoCol("aum-body",     p.tables?.aum?.items,     p.tables?.aum?.best_fund,     "aum");
+      renderTwoCol("vol-body",     p.tables?.vol?.items,     p.tables?.vol?.best_fund,     "vol");
+      renderTwoCol("wad-body",     p.tables?.wad?.items,     p.tables?.wad?.best_fund,     "wad");
+      renderTwoCol("ter-body",     p.tables?.ter?.items,     p.tables?.ter?.best_fund,     "ter");
+
+      renderDiversification(p.tables?.div?.items || []);
+      renderTopCountry(p.tables?.top_country || {});
+    })();
     </script>
 </body>
 </html>
