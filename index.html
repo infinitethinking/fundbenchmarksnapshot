@@ -1,239 +1,355 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fund Performance Benchmark</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@700&display=swap" rel="stylesheet">
-    <style>
-        body { background: #1A1230; font-family: 'Inter', sans-serif; color: #E0E7FF; }
-        .glass-card {
-            background: rgba(44, 26, 82, 0.4);
-            border: 1px solid rgba(75, 45, 130, 0.6);
-            border-radius: 16px;
-            padding: 1.5rem;
-            height: 100%;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        .glass-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(192, 168, 255, 0.8);
-            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
-        }
-        .text-light-purple { color: #C0A8FF; }
-        .table-header { background: rgba(118, 77, 213, 0.2); font-weight: 600; color: #C0A8FF; }
-        table { table-layout: fixed; }
-        tbody tr { transition: background-color 0.15s ease; cursor: default; }
-        tbody tr:hover { background-color: rgba(192, 168, 255, 0.1) !important; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fund Performance Benchmark</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body { background: #1A1230; font-family: 'Inter', sans-serif; color: #E0E7FF; }
+    .glass-card {
+      background: rgba(44, 26, 82, 0.4);
+      border: 1px solid rgba(75, 45, 130, 0.6);
+      border-radius: 16px;
+      padding: 1.5rem;
+      height: 100%;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(192, 168, 255, 0.8);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+    .text-light-purple { color: #C0A8FF; }
+    .table-header { background: rgba(118, 77, 213, 0.2); font-weight: 600; color: #C0A8FF; }
+    table { table-layout: fixed; }
+    tbody tr { transition: background-color 0.15s ease; cursor: default; }
+    tbody tr:hover { background-color: rgba(192, 168, 255, 0.1) !important; }
+  </style>
 </head>
 
 <body class="p-8">
-    <div class="max-w-6xl mx-auto space-y-8">
-        <header class="text-center">
-            <h1 class="text-5xl font-extrabold text-light-purple">Fund Benchmark Snapshot</h1>
-            <p id="nav-date" class="mt-2 text-xl opacity-60"></p>
-        </header>
+  <div class="max-w-6xl mx-auto space-y-8">
+    <header class="text-center">
+      <h1 class="text-5xl font-extrabold text-light-purple">Fund Benchmark Snapshot</h1>
+      <p id="nav-date" class="mt-2 text-xl opacity-60"></p>
+    </header>
 
-        <div class="glass-card">
-            <h3 class="text-xl font-semibold mb-4 text-light-purple">INSIGHTS</h3>
-            <div id="insights-s1" class="text-lg opacity-90 leading-relaxed font-normal"></div>
-            <div class="border-t border-white/10 my-4"></div>
-            <div id="insights-s2" class="text-lg opacity-90 leading-relaxed font-normal"></div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass-card">
-                <h3 class="text-xl font-semibold mb-4 text-light-purple">Monthly Performance</h3>
-                <table class="w-full text-left">
-                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
-                    <tbody id="monthly-body" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-            <div class="glass-card">
-                <h3 class="text-xl font-semibold mb-4 text-light-purple">Year-to-Date (YTD)</h3>
-                <table class="w-full text-left">
-                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
-                    <tbody id="ytd-body" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass-card">
-                <h3 class="text-xl font-semibold mb-4 text-light-purple">Annualised Performance</h3>
-                <table class="w-full text-left">
-                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
-                    <tbody id="annual-body" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-            <div class="glass-card">
-                <h3 class="text-xl font-semibold mb-4 text-light-purple">Fund Size (AuM)</h3>
-                <table class="w-full text-left">
-                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">AuM</th></tr></thead>
-                    <tbody id="aum-body" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="glass-card">
-                <h3 class="text-xl font-semibold mb-4 text-light-purple">Volatility</h3>
-                <table class="w-full text-left">
-                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Vol.</th></tr></thead>
-                    <tbody id="vol-body" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-            <div class="glass-card">
-                <h3 class="text-xl font-semibold mb-4 text-light-purple">Weighted Average Duration (WAD)</h3>
-                <table class="w-full text-left">
-                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">WAD</th></tr></thead>
-                    <tbody id="wad-body" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="glass-card">
-            <h3 class="text-xl font-semibold mb-4 text-light-purple">Total Expense Ratio (TER)</h3>
-            <table class="w-full text-left">
-                <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">TER</th></tr></thead>
-                <tbody id="ter-body" class="divide-y divide-white/5"></tbody>
-            </table>
-        </div>
-
-        <div class="glass-card">
-            <h3 class="text-xl font-semibold mb-4 text-light-purple">Diversification</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left">
-                    <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2">Investments</th><th class="p-2 text-right">Countries</th></tr></thead>
-                    <tbody id="div-body" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="glass-card">
-            <h3 class="text-xl font-semibold mb-4 text-light-purple">Top Country Allocation</h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead id="country-thead" class="table-header"></thead>
-                    <tbody id="country-tbody" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <footer class="mt-12 text-[11px] opacity-60 text-center border-t border-white/10 pt-8 leading-relaxed">
-            <p class="font-bold mb-2">Data disclaimer:</p>
-            <p>The figures and information shown above are based exclusively on publicly available data. This page does not contain any confidential, proprietary, or non-public information. The content is provided for informational purposes only and does not constitute investment advice. Past performance is not indicative of future results.</p>
-        </footer>
+    <div class="glass-card">
+      <h3 class="text-xl font-semibold mb-4 text-light-purple">INSIGHTS</h3>
+      <div id="insights-s1" class="text-lg opacity-90 leading-relaxed font-normal"></div>
+      <div class="border-t border-white/10 my-4"></div>
+      <div id="insights-s2" class="text-lg opacity-90 leading-relaxed font-normal"></div>
     </div>
 
-    <script type="application/json" id="payload">
-    {"nav_date":"Reporting date: 31 December 2025","insights_s1":"Symbiotics Emerging Credit was the monthly performance leader with a lead margin of 33 bps over BlueOrchard Microfinance.","insights_s2":"responsAbility Micro and SME is the year to date leader with a lead margin of 52 bps over Symbiotics Emerging Credit.","tables":{"monthly":{"best_fund":"Symbiotics Emerging Credit","items":[{"fund":"Symbiotics Emerging Credit","value":"0.89%"},{"fund":"BlueOrchard Microfinance","value":"0.56%"},{"fund":"responsAbility Micro and SME","value":"0.47%"},{"fund":"ASN Microkredietfonds R","value":"0.10%"}]},"ytd":{"best_fund":"responsAbility Micro and SME","items":[{"fund":"responsAbility Micro and SME","value":"6.71%"},{"fund":"BlueOrchard Microfinance","value":"6.30%"},{"fund":"Symbiotics Emerging Credit","value":"6.19%"},{"fund":"ASN Microkredietfonds R","value":"-3.06%"}]},"annual":{"best_fund":"responsAbility Micro and SME","items":[{"fund":"responsAbility Micro and SME","value":"4.49%"},{"fund":"BlueOrchard Microfinance","value":"4.41%"},{"fund":"Symbiotics Emerging Credit","value":"3.52%"},{"fund":"ASN Microkredietfonds R","value":"1.28%"}]},"aum":{"best_fund":"BlueOrchard Microfinance","items":[{"fund":"BlueOrchard Microfinance","value":"$3,198.7m"},{"fund":"responsAbility Micro and SME","value":"$621.7m"},{"fund":"ASN Microkredietfonds R","value":"EUR 173.7m"},{"fund":"Symbiotics Emerging Credit","value":"$55.2m"}]},"vol":{"best_fund":"BlueOrchard Microfinance","items":[{"fund":"BlueOrchard Microfinance","value":"0.49%"},{"fund":"responsAbility Micro and SME","value":"0.78%"},{"fund":"Symbiotics Emerging Credit","value":"0.88%"},{"fund":"ASN Microkredietfonds R","value":"n.a."}]},"wad":{"best_fund":"ASN Microkredietfonds R","items":[{"fund":"ASN Microkredietfonds R","value":"14.5mo"},{"fund":"Symbiotics Emerging Credit","value":"23.5mo"},{"fund":"BlueOrchard Microfinance","value":"25.7mo"},{"fund":"responsAbility Micro and SME","value":"26.4mo"}]},"ter":{"best_fund":"Symbiotics Emerging Credit","items":[{"fund":"Symbiotics Emerging Credit","value":"0.96%"},{"fund":"responsAbility Micro and SME","value":"1.25%"},{"fund":"BlueOrchard Microfinance","value":"1.34%"},{"fund":"ASN Microkredietfonds R","value":"2.30%"}]},"div":{"items":[{"fund":"responsAbility Micro and SME","investments":"174","countries":"56"},{"fund":"BlueOrchard Microfinance","investments":"160","countries":"51"},{"fund":"Symbiotics Emerging Credit","investments":"90","countries":"42"},{"fund":"ASN Microkredietfonds R","investments":"n.a.","countries":"n.a."}]},"top_country":{"funds":["BlueOrchard Microfinance","responsAbility Micro and SME","Symbiotics Emerging Credit","ASN Microkredietfonds R"],"rows":[{"label":"Top Country 1","values":["India (10.3%)","India (9.6%)","India (9.3%)",""]},{"label":"Top Country 2","values":["Georgia (7.9%)","Turkey (6.7%)","Mexico (6.6%)",""]},{"label":"Top Country 3","values":["Uzbekistan (6.3%)","Georgia (6.7%)","Mongolia (5.6%)",""]}]}}}
-    </script>
+    <!-- Row 1 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card">
+        <h3 class="text-xl font-semibold mb-4 text-light-purple">Monthly Performance</h3>
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
+          <tbody id="monthly-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+      <div class="glass-card">
+        <h3 class="text-xl font-semibold mb-4 text-light-purple">Year-to-Date (YTD)</h3>
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
+          <tbody id="ytd-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </div>
 
-    <script>
-    (function () {
-      const HILITE = "text-teal-300 font-bold";
-      const HILITE_TABLES = new Set(["monthly","ytd","annual","aum","vol","wad","ter"]);
+    <!-- Row 2 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card">
+        <h3 class="text-xl font-semibold mb-4 text-light-purple">Annualised Performance</h3>
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
+          <tbody id="annual-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+      <div class="glass-card">
+        <h3 class="text-xl font-semibold mb-4 text-light-purple">Fund Size (AuM)</h3>
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">AuM</th></tr></thead>
+          <tbody id="aum-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </div>
 
-      function parsePayload() {
-        const el = document.getElementById("payload");
-        if (!el) throw new Error("Missing #payload");
-        return JSON.parse(el.textContent);
-      }
+    <!-- Row 3 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card">
+        <h3 class="text-xl font-semibold mb-4 text-light-purple">Volatility</h3>
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Vol.</th></tr></thead>
+          <tbody id="vol-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+      <div class="glass-card">
+        <h3 class="text-xl font-semibold mb-4 text-light-purple">Weighted Average Duration (WAD)</h3>
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">WAD</th></tr></thead>
+          <tbody id="wad-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </div>
 
-      function setText(id, value) {
-        const el = document.getElementById(id);
-        if (!el) throw new Error("Missing #" + id);
-        el.textContent = value ?? "";
-      }
+    <!-- TER -->
+    <div class="glass-card">
+      <h3 class="text-xl font-semibold mb-4 text-light-purple">Total Expense Ratio (TER)</h3>
+      <table class="w-full text-left">
+        <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">TER</th></tr></thead>
+        <tbody id="ter-body" class="divide-y divide-white/5"></tbody>
+      </table>
+    </div>
 
-      function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+    <!-- Diversification -->
+    <div class="glass-card">
+      <h3 class="text-xl font-semibold mb-4 text-light-purple">Diversification</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2">Investments</th><th class="p-2 text-right">Countries</th></tr></thead>
+          <tbody id="div-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </div>
 
-      function mkTd(text, className, titleText) {
-        const td = document.createElement("td");
-        td.className = className;
-        td.textContent = text ?? "";
-        if (titleText) td.title = titleText;
-        return td;
-      }
+    <!-- Top Country Allocation -->
+    <div class="glass-card">
+      <h3 class="text-xl font-semibold mb-4 text-light-purple">Top Country Allocation</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead id="country-thead" class="table-header"></thead>
+          <tbody id="country-tbody" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </div>
 
-      function renderTwoCol(tbodyId, items, bestFund, tableKey) {
-        const tbody = document.getElementById(tbodyId);
-        clear(tbody);
+    <footer class="mt-12 text-[11px] opacity-60 text-center border-t border-white/10 pt-8 leading-relaxed">
+      <p class="font-bold mb-2">Data disclaimer:</p>
+      <p>The figures and information shown above are based exclusively on publicly available data. This page does not contain any confidential, proprietary, or non-public information. The content is provided for informational purposes only and does not constitute investment advice. Past performance is not indicative of future results.</p>
+    </footer>
+  </div>
 
-        (items || []).forEach((it, idx) => {
-          const tr = document.createElement("tr");
+  <script type="application/json" id="payload">
+  {
+  "nav_date": "Reporting date: 31 December 2025",
+  "insights_s1": "Symbiotics Emerging Credit led monthly performance with a return of 0.89%, outperforming BlueOrchard Microfinance by 33 bps.",
+  "insights_s2": "On a year-to-date basis, responsAbility Micro and SME recorded the highest return of 6.71%, leading Symbiotics Emerging Credit by 52 bps.",
+  "tables": {
+    "monthly": {
+      "best_fund": "Symbiotics Emerging Credit",
+      "items": [
+        { "fund": "Symbiotics Emerging Credit", "value": "0.89%" },
+        { "fund": "BlueOrchard Microfinance", "value": "0.56%" },
+        { "fund": "EMF Microfinance Fund", "value": "0.49%" },
+        { "fund": "responsAbility Micro and SME", "value": "0.47%" }
+      ]
+    },
+    "ytd": {
+      "best_fund": "responsAbility Micro and SME",
+      "items": [
+        { "fund": "responsAbility Micro and SME", "value": "6.71%" },
+        { "fund": "EMF Microfinance Fund", "value": "6.43%" },
+        { "fund": "BlueOrchard Microfinance", "value": "6.30%" },
+        { "fund": "Symbiotics Emerging Credit", "value": "6.19%" }
+      ]
+    },
+    "annual": {
+      "best_fund": "EMF Microfinance Fund",
+      "items": [
+        { "fund": "EMF Microfinance Fund", "value": "6.15%" },
+        { "fund": "responsAbility Micro and SME", "value": "4.49%" },
+        { "fund": "BlueOrchard Microfinance", "value": "4.41%" },
+        { "fund": "Symbiotics Emerging Credit", "value": "3.52%" }
+      ]
+    },
+    "aum": {
+      "best_fund": "BlueOrchard Microfinance",
+      "items": [
+        { "fund": "BlueOrchard Microfinance", "value": "$3,198.7m" },
+        { "fund": "EMF Microfinance Fund", "value": "$726.7m" },
+        { "fund": "responsAbility Micro and SME", "value": "$621.7m" },
+        { "fund": "Symbiotics Emerging Credit", "value": "$55.2m" }
+      ]
+    },
+    "vol": {
+      "best_fund": "EMF Microfinance Fund",
+      "items": [
+        { "fund": "EMF Microfinance Fund", "value": "0.18%" },
+        { "fund": "BlueOrchard Microfinance", "value": "0.49%" },
+        { "fund": "responsAbility Micro and SME", "value": "0.78%" },
+        { "fund": "Symbiotics Emerging Credit", "value": "0.88%" }
+      ]
+    },
+    "wad": {
+      "best_fund": "EMF Microfinance Fund",
+      "items": [
+        { "fund": "EMF Microfinance Fund", "value": "23.5mo" },
+        { "fund": "Symbiotics Emerging Credit", "value": "23.5mo" },
+        { "fund": "BlueOrchard Microfinance", "value": "26.0mo" },
+        { "fund": "responsAbility Micro and SME", "value": "26.4mo" }
+      ]
+    },
+    "ter": {
+      "best_fund": "Symbiotics Emerging Credit",
+      "items": [
+        { "fund": "Symbiotics Emerging Credit", "value": "0.96%" },
+        { "fund": "responsAbility Micro and SME", "value": "1.25%" },
+        { "fund": "BlueOrchard Microfinance", "value": "1.34%" },
+        { "fund": "EMF Microfinance Fund", "value": "n.a." }
+      ]
+    },
+    "div": {
+      "items": [
+        { "fund": "responsAbility Micro and SME", "investments": "174", "countries": "56" },
+        { "fund": "BlueOrchard Microfinance", "investments": "160", "countries": "51" },
+        { "fund": "EMF Microfinance Fund", "investments": "142", "countries": "48" },
+        { "fund": "Symbiotics Emerging Credit", "investments": "90", "countries": "42" }
+      ]
+    },
+    "top_country": {
+      "funds": [
+        "BlueOrchard Microfinance",
+        "responsAbility Micro and SME",
+        "Symbiotics Emerging Credit",
+        "EMF Microfinance Fund"
+      ],
+      "rows": [
+        { "label": "Top Country 1", "values": [ "India (10.3%)", "India (9.6%)", "India (9.3%)", "Ecuador (7.8%)" ] },
+        { "label": "Top Country 2", "values": [ "Georgia (7.9%)", "Turkey (6.7%)", "Mexico (6.6%)", "Mongolia (7.4%)" ] },
+        { "label": "Top Country 3", "values": [ "Uzbekistan (6.3%)", "Georgia (6.7%)", "Mongolia (5.6%)", "India (7.2%)" ] }
+      ]
+    }
+  }
+}
+  </script>
 
-          if (HILITE_TABLES.has(tableKey) && idx === 0) tr.className = HILITE;
-          if (bestFund && it.fund === bestFund && HILITE_TABLES.has(tableKey)) {
-            tr.className = tr.className ? (tr.className + " " + HILITE) : HILITE;
-          }
+  <script>
+  (function () {
+    const HILITE = "text-teal-300 font-bold";
+    const HILITE_TABLES = new Set(["monthly","ytd","annual","aum","vol","wad","ter"]);
 
-          tr.appendChild(mkTd(it.fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
-          tr.appendChild(mkTd(it.value, "p-2 text-right tabular-nums", it.value));
-          tbody.appendChild(tr);
-        });
-      }
+    function parsePayload() {
+      const el = document.getElementById("payload");
+      if (!el) throw new Error("Missing #payload");
+      return JSON.parse(el.textContent);
+    }
 
-      function renderDiversification(items) {
-        const tbody = document.getElementById("div-body");
-        clear(tbody);
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (!el) throw new Error("Missing #" + id);
+      el.textContent = value ?? "";
+    }
 
-        (items || []).forEach(it => {
-          const tr = document.createElement("tr");
-          tr.appendChild(mkTd(it.fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
-          tr.appendChild(mkTd(it.investments, "p-2 tabular-nums", it.investments));
-          tr.appendChild(mkTd(it.countries, "p-2 text-right tabular-nums", it.countries));
-          tbody.appendChild(tr);
-        });
-      }
+    function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
 
-      function renderTopCountry(tc) {
-        const thead = document.getElementById("country-thead");
-        const tbody = document.getElementById("country-tbody");
-        clear(thead); clear(tbody);
+    function mkTd(text, className, titleText) {
+      const td = document.createElement("td");
+      td.className = className;
+      td.textContent = text ?? "";
+      if (titleText) td.title = titleText;
+      return td;
+    }
 
-        const trh = document.createElement("tr");
-        trh.appendChild(mkTd("Fund", "p-2"));
-        trh.appendChild(mkTd("Top Country 1", "p-2"));
-        trh.appendChild(mkTd("Top Country 2", "p-2"));
-        trh.appendChild(mkTd("Top Country 3", "p-2"));
-        thead.appendChild(trh);
+    function renderTwoCol(tbodyId, items, bestFund, tableKey) {
+      const tbody = document.getElementById(tbodyId);
+      clear(tbody);
+      (items || []).forEach((it, idx) => {
+        const tr = document.createElement("tr");
+        if (HILITE_TABLES.has(tableKey) && idx === 0) tr.className = HILITE;
+        if (bestFund && it.fund === bestFund && HILITE_TABLES.has(tableKey)) {
+          tr.className = tr.className ? (tr.className + " " + HILITE) : HILITE;
+        }
+        tr.appendChild(mkTd(it.fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
+        tr.appendChild(mkTd(it.value, "p-2 text-right tabular-nums", it.value));
+        tbody.appendChild(tr);
+      });
+    }
 
-        const funds = tc?.funds || [];
-        const v1 = tc?.rows?.[0]?.values || [];
-        const v2 = tc?.rows?.[1]?.values || [];
-        const v3 = tc?.rows?.[2]?.values || [];
+    function renderDiversification(items) {
+      const tbody = document.getElementById("div-body");
+      clear(tbody);
+      (items || []).forEach(it => {
+        const tr = document.createElement("tr");
+        tr.appendChild(mkTd(it.fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
+        tr.appendChild(mkTd(it.investments ?? "n.a.", "p-2 tabular-nums", it.investments ?? "n.a."));
+        tr.appendChild(mkTd(it.countries ?? "n.a.", "p-2 text-right tabular-nums", it.countries ?? "n.a."));
+        tbody.appendChild(tr);
+      });
+    }
 
-        funds.forEach((fund, i) => {
-          const tr = document.createElement("tr");
-          tr.appendChild(mkTd(fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", fund));
-          tr.appendChild(mkTd(v1[i] ?? "", "p-2", v1[i] ?? ""));
-          tr.appendChild(mkTd(v2[i] ?? "", "p-2", v2[i] ?? ""));
-          tr.appendChild(mkTd(v3[i] ?? "", "p-2", v3[i] ?? ""));
-          tbody.appendChild(tr);
-        });
-      }
+    function pctKey(s) {
+      const t = (s ?? "").trim();
+      if (t === "" || t.toLowerCase() === "n.a.") return -1;
+      const m = t.match(/\(([-+]?\d+(\.\d+)?)%\)/);
+      if (!m) return -1;
+      return parseFloat(m[1]);
+    }
 
-      const p = parsePayload();
+    function renderTopCountry(tc) {
+      const thead = document.getElementById("country-thead");
+      const tbody = document.getElementById("country-tbody");
+      clear(thead); clear(tbody);
 
-      setText("nav-date", p.nav_date || "");
-      setText("insights-s1", p.insights_s1 || "");
-      setText("insights-s2", p.insights_s2 || "");
+      const trh = document.createElement("tr");
+      trh.appendChild(mkTd("Fund", "p-2"));
+      trh.appendChild(mkTd("Top Country 1", "p-2"));
+      trh.appendChild(mkTd("Top Country 2", "p-2"));
+      trh.appendChild(mkTd("Top Country 3", "p-2"));
+      thead.appendChild(trh);
 
-      renderTwoCol("monthly-body", p.tables?.monthly?.items, p.tables?.monthly?.best_fund, "monthly");
-      renderTwoCol("ytd-body",     p.tables?.ytd?.items,     p.tables?.ytd?.best_fund,     "ytd");
-      renderTwoCol("annual-body",  p.tables?.annual?.items,  p.tables?.annual?.best_fund,  "annual");
-      renderTwoCol("aum-body",     p.tables?.aum?.items,     p.tables?.aum?.best_fund,     "aum");
-      renderTwoCol("vol-body",     p.tables?.vol?.items,     p.tables?.vol?.best_fund,     "vol");
-      renderTwoCol("wad-body",     p.tables?.wad?.items,     p.tables?.wad?.best_fund,     "wad");
-      renderTwoCol("ter-body",     p.tables?.ter?.items,     p.tables?.ter?.best_fund,     "ter");
+      const funds = tc?.funds || [];
+      const v1 = tc?.rows?.[0]?.values || [];
+      const v2 = tc?.rows?.[1]?.values || [];
+      const v3 = tc?.rows?.[2]?.values || [];
 
-      renderDiversification(p.tables?.div?.items || []);
-      renderTopCountry(p.tables?.top_country || {});
-    })();
-    </script>
+      // Defensive deterministic sort (ensures correct order even if payload order is wrong)
+      const idxs = funds.map((_, i) => i);
+      idxs.sort((a, b) => {
+        const ka = pctKey(v1[a]);
+        const kb = pctKey(v1[b]);
+        if (kb !== ka) return kb - ka; // DESC
+        const fa = (funds[a] || "").toLowerCase();
+        const fb = (funds[b] || "").toLowerCase();
+        return fa < fb ? -1 : fa > fb ? 1 : 0; // A–Z
+      });
+
+      idxs.forEach(i => {
+        const fund = funds[i];
+        const c1 = (v1[i] ?? "").trim(); const C1 = (c1 === "" ? "n.a." : c1);
+        const c2 = (v2[i] ?? "").trim(); const C2 = (c2 === "" ? "n.a." : c2);
+        const c3 = (v3[i] ?? "").trim(); const C3 = (c3 === "" ? "n.a." : c3);
+
+        const tr = document.createElement("tr");
+        tr.appendChild(mkTd(fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", fund));
+        tr.appendChild(mkTd(C1, "p-2", C1));
+        tr.appendChild(mkTd(C2, "p-2", C2));
+        tr.appendChild(mkTd(C3, "p-2", C3));
+        tbody.appendChild(tr);
+      });
+    }
+
+    const p = parsePayload();
+
+    setText("nav-date", p.nav_date || "");
+    setText("insights-s1", p.insights_s1 || "");
+    setText("insights-s2", p.insights_s2 || "");
+
+    renderTwoCol("monthly-body", p.tables?.monthly?.items, p.tables?.monthly?.best_fund, "monthly");
+    renderTwoCol("ytd-body",     p.tables?.ytd?.items,     p.tables?.ytd?.best_fund,     "ytd");
+    renderTwoCol("annual-body",  p.tables?.annual?.items,  p.tables?.annual?.best_fund,  "annual");
+    renderTwoCol("aum-body",     p.tables?.aum?.items,     p.tables?.aum?.best_fund,     "aum");
+    renderTwoCol("vol-body",     p.tables?.vol?.items,     p.tables?.vol?.best_fund,     "vol");
+    renderTwoCol("wad-body",     p.tables?.wad?.items,     p.tables?.wad?.best_fund,     "wad");
+    renderTwoCol("ter-body",     p.tables?.ter?.items,     p.tables?.ter?.best_fund,     "ter");
+
+    renderDiversification(p.tables?.div?.items || []);
+    renderTopCountry(p.tables?.top_country || {});
+  })();
+  </script>
 </body>
 </html>
