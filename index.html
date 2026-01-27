@@ -26,6 +26,10 @@
     table { table-layout: fixed; }
     tbody tr { transition: background-color 0.15s ease; cursor: default; }
     tbody tr:hover { background-color: rgba(192, 168, 255, 0.1) !important; }
+
+    .shared-1 { color: #5EEAD4; }
+    .shared-2 { color: #F472B6; }
+    .shared-3 { color: #FBBF24; }
   </style>
 </head>
 
@@ -41,6 +45,14 @@
       <div id="insights-s1" class="text-lg opacity-90 leading-relaxed font-normal"></div>
       <div class="border-t border-white/10 my-4"></div>
       <div id="insights-s2" class="text-lg opacity-90 leading-relaxed font-normal"></div>
+    </div>
+
+    <!-- Fund Directory (NO header text) -->
+    <div class="glass-card">
+      <table class="w-full text-left">
+        <thead class="table-header"><tr><th class="p-2">Name</th><th class="p-2">ISIN</th><th class="p-2 text-right">AuM</th><th class="p-2 text-right">Factsheet</th></tr></thead>
+        <tbody id="directory-body" class="divide-y divide-white/5"></tbody>
+      </table>
     </div>
 
     <!-- Row 1 -->
@@ -64,23 +76,14 @@
     <!-- Row 2 -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="glass-card">
-        <h3 class="text-xl font-semibold mb-4 text-light-purple">Annualised Performance</h3>
+        <h3 class="text-xl font-semibold mb-4 text-light-purple">
+          Annualised Performance <span class="text-sm font-normal text-light-purple opacity-80">(since inception)</span>
+        </h3>
         <table class="w-full text-left">
           <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
           <tbody id="annual-body" class="divide-y divide-white/5"></tbody>
         </table>
       </div>
-      <div class="glass-card">
-        <h3 class="text-xl font-semibold mb-4 text-light-purple">Fund Size (AuM)</h3>
-        <table class="w-full text-left">
-          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">AuM</th></tr></thead>
-          <tbody id="aum-body" class="divide-y divide-white/5"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Row 3 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="glass-card">
         <h3 class="text-xl font-semibold mb-4 text-light-purple">Volatility</h3>
         <table class="w-full text-left">
@@ -88,22 +91,24 @@
           <tbody id="vol-body" class="divide-y divide-white/5"></tbody>
         </table>
       </div>
+    </div>
+
+    <!-- Row 3: TER left, WAD right -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="glass-card">
-        <h3 class="text-xl font-semibold mb-4 text-light-purple">Weighted Average Duration (WAD)</h3>
+        <h3 class="text-xl font-semibold mb-4 text-light-purple">Total Expense Ratio (TER)</h3>
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">TER</th></tr></thead>
+          <tbody id="ter-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+      <div class="glass-card">
+        <h3 class="text-xl font-semibold mb-4 text-light-purple">Weighted average duration</h3>
         <table class="w-full text-left">
           <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">WAD</th></tr></thead>
           <tbody id="wad-body" class="divide-y divide-white/5"></tbody>
         </table>
       </div>
-    </div>
-
-    <!-- TER -->
-    <div class="glass-card">
-      <h3 class="text-xl font-semibold mb-4 text-light-purple">Total Expense Ratio (TER)</h3>
-      <table class="w-full text-left">
-        <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">TER</th></tr></thead>
-        <tbody id="ter-body" class="divide-y divide-white/5"></tbody>
-      </table>
     </div>
 
     <!-- Diversification -->
@@ -128,6 +133,28 @@
       </div>
     </div>
 
+    <!-- Top Investees -->
+    <div class="glass-card">
+      <h3 class="text-xl font-semibold mb-4 text-light-purple">Top Investees</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead id="investee-thead" class="table-header"></thead>
+          <tbody id="investee-tbody" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Impact -->
+    <div class="glass-card">
+      <h3 class="text-xl font-semibold mb-4 text-light-purple">Impact Metrics</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2">Borrowers</th><th class="p-2">Loan</th><th class="p-2 text-right">Rural %</th><th class="p-2 text-right">Women %</th></tr></thead>
+          <tbody id="impact-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </div>
+
     <footer class="mt-12 text-[11px] opacity-60 text-center border-t border-white/10 pt-8 leading-relaxed">
       <p class="font-bold mb-2">Data disclaimer:</p>
       <p>The figures and information shown above are based exclusively on publicly available data. This page does not contain any confidential, proprietary, or non-public information. The content is provided for informational purposes only and does not constitute investment advice. Past performance is not indicative of future results.</p>
@@ -135,103 +162,13 @@
   </div>
 
   <script type="application/json" id="payload">
-  {
-  "nav_date": "Reporting date: 31 December 2025",
-  "insights_s1": "Symbiotics Emerging Credit led monthly performance with a return of 0.89%, outperforming BlueOrchard Microfinance by 33 bps.",
-  "insights_s2": "On a year-to-date basis, responsAbility Micro and SME recorded the highest return of 6.71%, leading Symbiotics Emerging Credit by 52 bps.",
-  "tables": {
-    "monthly": {
-      "best_fund": "Symbiotics Emerging Credit",
-      "items": [
-        { "fund": "Symbiotics Emerging Credit", "value": "0.89%" },
-        { "fund": "BlueOrchard Microfinance", "value": "0.56%" },
-        { "fund": "EMF Microfinance Fund", "value": "0.49%" },
-        { "fund": "responsAbility Micro and SME", "value": "0.47%" }
-      ]
-    },
-    "ytd": {
-      "best_fund": "responsAbility Micro and SME",
-      "items": [
-        { "fund": "responsAbility Micro and SME", "value": "6.71%" },
-        { "fund": "EMF Microfinance Fund", "value": "6.43%" },
-        { "fund": "BlueOrchard Microfinance", "value": "6.30%" },
-        { "fund": "Symbiotics Emerging Credit", "value": "6.19%" }
-      ]
-    },
-    "annual": {
-      "best_fund": "EMF Microfinance Fund",
-      "items": [
-        { "fund": "EMF Microfinance Fund", "value": "6.15%" },
-        { "fund": "responsAbility Micro and SME", "value": "4.49%" },
-        { "fund": "BlueOrchard Microfinance", "value": "4.41%" },
-        { "fund": "Symbiotics Emerging Credit", "value": "3.52%" }
-      ]
-    },
-    "aum": {
-      "best_fund": "BlueOrchard Microfinance",
-      "items": [
-        { "fund": "BlueOrchard Microfinance", "value": "$3,198.7m" },
-        { "fund": "EMF Microfinance Fund", "value": "$726.7m" },
-        { "fund": "responsAbility Micro and SME", "value": "$621.7m" },
-        { "fund": "Symbiotics Emerging Credit", "value": "$55.2m" }
-      ]
-    },
-    "vol": {
-      "best_fund": "EMF Microfinance Fund",
-      "items": [
-        { "fund": "EMF Microfinance Fund", "value": "0.18%" },
-        { "fund": "BlueOrchard Microfinance", "value": "0.49%" },
-        { "fund": "responsAbility Micro and SME", "value": "0.78%" },
-        { "fund": "Symbiotics Emerging Credit", "value": "0.88%" }
-      ]
-    },
-    "wad": {
-      "best_fund": "EMF Microfinance Fund",
-      "items": [
-        { "fund": "EMF Microfinance Fund", "value": "23.5mo" },
-        { "fund": "Symbiotics Emerging Credit", "value": "23.5mo" },
-        { "fund": "BlueOrchard Microfinance", "value": "26.0mo" },
-        { "fund": "responsAbility Micro and SME", "value": "26.4mo" }
-      ]
-    },
-    "ter": {
-      "best_fund": "Symbiotics Emerging Credit",
-      "items": [
-        { "fund": "Symbiotics Emerging Credit", "value": "0.96%" },
-        { "fund": "responsAbility Micro and SME", "value": "1.25%" },
-        { "fund": "BlueOrchard Microfinance", "value": "1.34%" },
-        { "fund": "EMF Microfinance Fund", "value": "n.a." }
-      ]
-    },
-    "div": {
-      "items": [
-        { "fund": "responsAbility Micro and SME", "investments": "174", "countries": "56" },
-        { "fund": "BlueOrchard Microfinance", "investments": "160", "countries": "51" },
-        { "fund": "EMF Microfinance Fund", "investments": "142", "countries": "48" },
-        { "fund": "Symbiotics Emerging Credit", "investments": "90", "countries": "42" }
-      ]
-    },
-    "top_country": {
-      "funds": [
-        "BlueOrchard Microfinance",
-        "responsAbility Micro and SME",
-        "Symbiotics Emerging Credit",
-        "EMF Microfinance Fund"
-      ],
-      "rows": [
-        { "label": "Top Country 1", "values": [ "India (10.3%)", "India (9.6%)", "India (9.3%)", "Ecuador (7.8%)" ] },
-        { "label": "Top Country 2", "values": [ "Georgia (7.9%)", "Turkey (6.7%)", "Mexico (6.6%)", "Mongolia (7.4%)" ] },
-        { "label": "Top Country 3", "values": [ "Uzbekistan (6.3%)", "Georgia (6.7%)", "Mongolia (5.6%)", "India (7.2%)" ] }
-      ]
-    }
-  }
-}
+  {"nav_date":"Reporting date: 31 December 2025","insights_s1":"Symbiotics led monthly performance with a return of 0.89%, outperforming BlueOrchard by 33 bps.","insights_s2":"On a year-to-date basis, responsAbility recorded the highest return of 6.71%, leading Symbiotics by 52 bps.","directory":[{"name":"BlueOrchard Microfinance","manager":"BlueOrchard","isin":"LU0973079543","aum":"$3,198.7m","url":"https://www.blueorchard.com/wp-content/uploads/report/bomf/BOMF_I_EN.pdf"},{"name":"EMF Microfinance Fund","manager":"Enabling","isin":"LI0542527226","aum":"$726.7m","url":"https://enabling.ch/media/attachments/2026/01/16/emf_institutional_factsheet_december_25.pdf"},{"name":"responsAbility Micro and SME","manager":"responsAbility","isin":"n.a.","aum":"$621.7m","url":"https://www.responsability.com/products/monthly/2025_12_DFI_EN.pdf"},{"name":"BlueOrchard Microfinance","manager":"Symbiotics","isin":"LU1960396510","aum":"$55.2m","url":"https://symbiotics-am.com/wp-content/uploads/2026/01/LU-ECF-C-ACC-NH-USD-en-GB-2025-12-31.pdf"}],"tables":{"monthly":{"best_fund":"Symbiotics Emerging Credit","items":[{"fund":"Symbiotics Emerging Credit","manager":"Symbiotics","value":"0.89%"},{"fund":"BlueOrchard Microfinance","manager":"BlueOrchard","value":"0.56%"},{"fund":"EMF Microfinance Fund","manager":"Enabling","value":"0.49%"},{"fund":"responsAbility Micro and SME","manager":"responsAbility","value":"0.47%"}]},"ytd":{"best_fund":"responsAbility Micro and SME","items":[{"fund":"responsAbility Micro and SME","manager":"responsAbility","value":"6.71%"},{"fund":"EMF Microfinance Fund","manager":"Enabling","value":"6.43%"},{"fund":"BlueOrchard Microfinance","manager":"BlueOrchard","value":"6.30%"},{"fund":"Symbiotics Emerging Credit","manager":"Symbiotics","value":"6.19%"}]},"annual":{"best_fund":"EMF Microfinance Fund","items":[{"fund":"EMF Microfinance Fund","manager":"Enabling","value":"6.15%"},{"fund":"responsAbility Micro and SME","manager":"responsAbility","value":"4.49%"},{"fund":"BlueOrchard Microfinance","manager":"BlueOrchard","value":"4.41%"},{"fund":"Symbiotics Emerging Credit","manager":"Symbiotics","value":"3.52%"}]},"vol":{"best_fund":"EMF Microfinance Fund","items":[{"fund":"EMF Microfinance Fund","manager":"Enabling","value":"0.18%"},{"fund":"BlueOrchard Microfinance","manager":"BlueOrchard","value":"0.49%"},{"fund":"responsAbility Micro and SME","manager":"responsAbility","value":"0.78%"},{"fund":"Symbiotics Emerging Credit","manager":"Symbiotics","value":"0.88%"}]},"wad":{"best_fund":"Symbiotics Emerging Credit","items":[{"fund":"Symbiotics Emerging Credit","manager":"Symbiotics","value":"23.5mo"},{"fund":"BlueOrchard Microfinance","manager":"BlueOrchard","value":"26.0mo"},{"fund":"responsAbility Micro and SME","manager":"responsAbility","value":"26.4mo"},{"fund":"EMF Microfinance Fund","manager":"Enabling","value":"n.a."}]},"ter":{"best_fund":"Symbiotics Emerging Credit","items":[{"fund":"Symbiotics Emerging Credit","manager":"Symbiotics","value":"0.96%"},{"fund":"EMF Microfinance Fund","manager":"Enabling","value":"1.20%"},{"fund":"responsAbility Micro and SME","manager":"responsAbility","value":"1.25%"},{"fund":"BlueOrchard Microfinance","manager":"BlueOrchard","value":"1.34%"}]},"div":{"items":[{"fund":"responsAbility Micro and SME","manager":"responsAbility","investments":"174","countries":"56"},{"fund":"BlueOrchard Microfinance","manager":"BlueOrchard","investments":"160","countries":"51"},{"fund":"EMF Microfinance Fund","manager":"Enabling","investments":"142","countries":"48"},{"fund":"Symbiotics Emerging Credit","manager":"Symbiotics","investments":"90","countries":"42"}]},"impact":{"items":[{"fund":"BlueOrchard Microfinance","manager":"BlueOrchard","borrowers":"1,029,663","loan":"$4,892","rural":"62.0%","women":"75.0%"},{"fund":"EMF Microfinance Fund","manager":"Enabling","borrowers":"480,167","loan":"$5,431","rural":"47.0%","women":"62.0%"},{"fund":"responsAbility Micro and SME","manager":"responsAbility","borrowers":"n.a.","loan":"n.a.","rural":"n.a.","women":"n.a."},{"fund":"Symbiotics Emerging Credit","manager":"Symbiotics","borrowers":"38,706","loan":"$4,683","rural":"47.4%","women":"69.3%"}]},"top_country":{"funds":["BlueOrchard","Enabling","responsAbility","Symbiotics"],"rows":[{"label":"Top Country 1","values":["India (10.3%)","Ecuador (8.2%)","India (9.6%)","India (9.3%)"],"group_ids":[1,null,1,1]},{"label":"Top Country 2","values":["Georgia (7.9%)","Mongolia (7.8%)","Turkey (6.7%)","Mexico (6.6%)"],"group_ids":[2,3,null,null]},{"label":"Top Country 3","values":["Uzbekistan (6.3%)","India (7.4%)","Georgia (6.7%)","Mongolia (5.6%)"],"group_ids":[null,1,2,3]}]},"investees":{"funds":["BlueOrchard","Enabling","responsAbility","Symbiotics"],"rows":[{"label":"Top Investee 1","values":["KMF BANK (2.95%)","Zeta Banco (3.0%)","Hamkor (2.6%)","Khan Bank (2.7%)"],"group_ids":[null,null,null,1]},{"label":"Top Investee 2","values":["PROCREDIT HOLDING (2.91%)","CoopeAnde (2.0%)","Agricover (2.4%)","Banco Continental (2.7%)"],"group_ids":[null,null,2,null]},{"label":"Top Investee 3","values":["KHAN BANK (2.49%)","Golomt Bank (2.0%)","Chongho (1.9%)","Ameriabank (2.3%)"],"group_ids":[1,null,null,null]},{"label":"Top Investee 4","values":["JSC CREDO BANK (2.35%)","Banco Bolivariano (2.0%)","IPAK YULI (1.9%)","AVLA Bermuda Holding (2.1%)"],"group_ids":[null,null,null,null]},{"label":"Top Investee 5","values":["AGRICOVER CREDIT (2.12%)","UniBank (2.0%)","ArmeconomBank (AEB) (1.7%)","Promerica CR (2.1%)"],"group_ids":[2,null,null,null]}]}}}
   </script>
 
   <script>
   (function () {
     const HILITE = "text-teal-300 font-bold";
-    const HILITE_TABLES = new Set(["monthly","ytd","annual","aum","vol","wad","ter"]);
+    const HILITE_TABLES = new Set(["monthly","ytd","annual","vol","wad","ter"]);
 
     function parsePayload() {
       const el = document.getElementById("payload");
@@ -255,6 +192,20 @@
       return td;
     }
 
+    function mkTdShared(text, className, groupId, titleText) {
+      const td = document.createElement("td");
+      const g = (groupId === 1 || groupId === 2 || groupId === 3) ? (" shared-" + groupId) : "";
+      td.className = className + g;
+      td.textContent = (text ?? "").trim() === "" ? "n.a." : (text ?? "");
+      if (titleText) td.title = titleText;
+      return td;
+    }
+
+    function managerFrom(it) {
+      const m = (it?.manager ?? "").trim();
+      return m && m.toLowerCase() !== "n.a." ? m : (it?.fund ?? "");
+    }
+
     function renderTwoCol(tbodyId, items, bestFund, tableKey) {
       const tbody = document.getElementById(tbodyId);
       clear(tbody);
@@ -264,7 +215,7 @@
         if (bestFund && it.fund === bestFund && HILITE_TABLES.has(tableKey)) {
           tr.className = tr.className ? (tr.className + " " + HILITE) : HILITE;
         }
-        tr.appendChild(mkTd(it.fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
+        tr.appendChild(mkTd(managerFrom(it), "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
         tr.appendChild(mkTd(it.value, "p-2 text-right tabular-nums", it.value));
         tbody.appendChild(tr);
       });
@@ -275,22 +226,31 @@
       clear(tbody);
       (items || []).forEach(it => {
         const tr = document.createElement("tr");
-        tr.appendChild(mkTd(it.fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
+        tr.appendChild(mkTd(managerFrom(it), "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
         tr.appendChild(mkTd(it.investments ?? "n.a.", "p-2 tabular-nums", it.investments ?? "n.a."));
         tr.appendChild(mkTd(it.countries ?? "n.a.", "p-2 text-right tabular-nums", it.countries ?? "n.a."));
         tbody.appendChild(tr);
       });
     }
 
-    function pctKey(s) {
+    function pctVal(s) {
       const t = (s ?? "").trim();
-      if (t === "" || t.toLowerCase() === "n.a.") return -1;
+      if (t === "" || t.toLowerCase() === "n.a.") return null;
       const m = t.match(/\(([-+]?\d+(\.\d+)?)%\)/);
-      if (!m) return -1;
+      if (!m) return null;
       return parseFloat(m[1]);
     }
 
-    function renderTopCountry(tc) {
+    function fmtPct1(x) {
+      return (Math.round(x * 10) / 10).toFixed(1) + "%";
+    }
+
+    function pctKey(s) {
+      const v = pctVal(s);
+      return v == null ? -1 : v;
+    }
+
+    function renderTopCountry(tc, managerMap) {
       const thead = document.getElementById("country-thead");
       const tbody = document.getElementById("country-tbody");
       clear(thead); clear(tbody);
@@ -300,55 +260,140 @@
       trh.appendChild(mkTd("Top Country 1", "p-2"));
       trh.appendChild(mkTd("Top Country 2", "p-2"));
       trh.appendChild(mkTd("Top Country 3", "p-2"));
+     trh.appendChild(mkTd("Total", "p-2 text-right"));
       thead.appendChild(trh);
 
       const funds = tc?.funds || [];
-      const v1 = tc?.rows?.[0]?.values || [];
-      const v2 = tc?.rows?.[1]?.values || [];
-      const v3 = tc?.rows?.[2]?.values || [];
+      const r1 = tc?.rows?.[0] || { values: [], group_ids: [] };
+      const r2 = tc?.rows?.[1] || { values: [], group_ids: [] };
+      const r3 = tc?.rows?.[2] || { values: [], group_ids: [] };
 
-      // Defensive deterministic sort (ensures correct order even if payload order is wrong)
+      const v1 = r1.values || [], g1 = r1.group_ids || [];
+      const v2 = r2.values || [], g2 = r2.group_ids || [];
+      const v3 = r3.values || [], g3 = r3.group_ids || [];
+
       const idxs = funds.map((_, i) => i);
       idxs.sort((a, b) => {
         const ka = pctKey(v1[a]);
         const kb = pctKey(v1[b]);
-        if (kb !== ka) return kb - ka; // DESC
+        if (kb !== ka) return kb - ka;
         const fa = (funds[a] || "").toLowerCase();
         const fb = (funds[b] || "").toLowerCase();
-        return fa < fb ? -1 : fa > fb ? 1 : 0; // A–Z
+        return fa < fb ? -1 : fa > fb ? 1 : 0;
       });
 
       idxs.forEach(i => {
         const fund = funds[i];
-        const c1 = (v1[i] ?? "").trim(); const C1 = (c1 === "" ? "n.a." : c1);
-        const c2 = (v2[i] ?? "").trim(); const C2 = (c2 === "" ? "n.a." : c2);
-        const c3 = (v3[i] ?? "").trim(); const C3 = (c3 === "" ? "n.a." : c3);
+        const mgr = managerMap.get(fund) || fund;
+
+        const p1 = pctVal(v1[i]);
+        const p2 = pctVal(v2[i]);
+        const p3 = pctVal(v3[i]);
+        const total = (p1 == null || p2 == null || p3 == null) ? "n.a." : fmtPct1(p1 + p2 + p3);
 
         const tr = document.createElement("tr");
-        tr.appendChild(mkTd(fund, "p-2 truncate whitespace-nowrap max-w-[18rem]", fund));
-        tr.appendChild(mkTd(C1, "p-2", C1));
-        tr.appendChild(mkTd(C2, "p-2", C2));
-        tr.appendChild(mkTd(C3, "p-2", C3));
+        tr.appendChild(mkTd(mgr, "p-2 truncate whitespace-nowrap max-w-[18rem]", fund));
+        tr.appendChild(mkTdShared(v1[i] ?? "n.a.", "p-2", g1[i] ?? null, v1[i] ?? "n.a."));
+        tr.appendChild(mkTdShared(v2[i] ?? "n.a.", "p-2", g2[i] ?? null, v2[i] ?? "n.a."));
+        tr.appendChild(mkTdShared(v3[i] ?? "n.a.", "p-2", g3[i] ?? null, v3[i] ?? "n.a."));
+        tr.appendChild(mkTd(total, "p-2 text-right tabular-nums", total));
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderMatrix(theadId, tbodyId, matrix, managerMap) {
+      const thead = document.getElementById(theadId);
+      const tbody = document.getElementById(tbodyId);
+      clear(thead); clear(tbody);
+
+      const funds = matrix?.funds || [];
+      const rows = matrix?.rows || [];
+
+      const trh = document.createElement("tr");
+      trh.appendChild(mkTd("Fund", "p-2"));
+      rows.forEach(r => trh.appendChild(mkTd(r.label ?? "", "p-2")));
+      thead.appendChild(trh);
+
+      funds.forEach((fund, i) => {
+        const mgr = managerMap.get(fund) || fund;
+        const tr = document.createElement("tr");
+        tr.appendChild(mkTd(mgr, "p-2 truncate whitespace-nowrap max-w-[18rem]", fund));
+        rows.forEach(r => {
+          const vals = r.values || [];
+          const gids = r.group_ids || [];
+          tr.appendChild(mkTdShared(vals[i] ?? "n.a.", "p-2", gids[i] ?? null, vals[i] ?? "n.a."));
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderDirectory(directory) {
+      const tbody = document.getElementById("directory-body");
+      clear(tbody);
+      (directory || []).forEach(d => {
+        const tr = document.createElement("tr");
+        tr.appendChild(mkTd(d.name ?? "n.a.", "p-2 truncate whitespace-nowrap max-w-[18rem]", d.name));
+        tr.appendChild(mkTd(d.isin ?? "n.a.", "p-2 opacity-60", d.isin));
+        tr.appendChild(mkTd(d.aum ?? "n.a.", "p-2 text-right tabular-nums", d.aum));
+        const td = document.createElement("td");
+        td.className = "p-2 text-right";
+        if (d.url && d.url !== "n.a.") {
+          const a = document.createElement("a");
+          a.href = d.url;
+          a.textContent = "View";
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+          a.className = "underline text-teal-300";
+          td.appendChild(a);
+        } else {
+          td.textContent = "n.a.";
+        }
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderImpact(items) {
+      const tbody = document.getElementById("impact-body");
+      clear(tbody);
+      (items || []).forEach(it => {
+        const tr = document.createElement("tr");
+        tr.appendChild(mkTd(managerFrom(it), "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
+        tr.appendChild(mkTd(it.borrowers ?? "n.a.", "p-2 tabular-nums", it.borrowers));
+        tr.appendChild(mkTd(it.loan ?? "n.a.", "p-2 tabular-nums", it.loan));
+        tr.appendChild(mkTd(it.rural ?? "n.a.", "p-2 text-right tabular-nums", it.rural));
+        tr.appendChild(mkTd(it.women ?? "n.a.", "p-2 text-right tabular-nums", it.women));
         tbody.appendChild(tr);
       });
     }
 
     const p = parsePayload();
 
+    const managerMap = new Map();
+    (p.directory || []).forEach(d => {
+      if (d?.name) {
+        const m = (d.manager ?? "").trim();
+        managerMap.set(d.name, (m && m.toLowerCase() !== "n.a.") ? m : d.name);
+      }
+    });
+
     setText("nav-date", p.nav_date || "");
     setText("insights-s1", p.insights_s1 || "");
     setText("insights-s2", p.insights_s2 || "");
 
+    renderDirectory(p.directory || []);
+
     renderTwoCol("monthly-body", p.tables?.monthly?.items, p.tables?.monthly?.best_fund, "monthly");
     renderTwoCol("ytd-body",     p.tables?.ytd?.items,     p.tables?.ytd?.best_fund,     "ytd");
     renderTwoCol("annual-body",  p.tables?.annual?.items,  p.tables?.annual?.best_fund,  "annual");
-    renderTwoCol("aum-body",     p.tables?.aum?.items,     p.tables?.aum?.best_fund,     "aum");
     renderTwoCol("vol-body",     p.tables?.vol?.items,     p.tables?.vol?.best_fund,     "vol");
-    renderTwoCol("wad-body",     p.tables?.wad?.items,     p.tables?.wad?.best_fund,     "wad");
     renderTwoCol("ter-body",     p.tables?.ter?.items,     p.tables?.ter?.best_fund,     "ter");
+    renderTwoCol("wad-body",     p.tables?.wad?.items,     p.tables?.wad?.best_fund,     "wad");
 
     renderDiversification(p.tables?.div?.items || []);
-    renderTopCountry(p.tables?.top_country || {});
+    renderTopCountry(p.tables?.top_country || {}, managerMap);
+    renderMatrix("investee-thead", "investee-tbody", p.tables?.investees || {}, managerMap);
+    renderImpact(p.tables?.impact?.items || []);
   })();
   </script>
 </body>
