@@ -92,11 +92,6 @@
   <div class="max-w-6xl mx-auto space-y-8">
     <header class="text-center">
       <h1 class="text-5xl font-extrabold text-light-purple">Fund Benchmark Snapshot</h1>
-      <div id="month-nav" class="mt-4 flex items-center justify-center gap-3">
-        <button id="month-prev" class="month-btn" type="button" aria-label="Previous month">‹</button>
-        <select id="month-select" aria-label="Reporting month"></select>
-        <button id="month-next" class="month-btn" type="button" aria-label="Next month">›</button>
-      </div>
       <p id="nav-date" class="mt-2 text-xl opacity-60"></p>
     </header>
 
@@ -1801,6 +1796,7 @@
       renderImpact(p.tables?.impact?.items || [], managerMap);
 
       const select = document.getElementById("month-select");
+      if (!select) return;
       clear(select);
       archive.months.forEach((month, idx) => {
         const option = document.createElement("option");
@@ -1815,13 +1811,33 @@
 
     const archive = parsePayload();
     if (!archive.months) archive.months = [archive];
-    const nav = document.getElementById("month-nav");
-    if (nav && archive.months.length < 2) nav.style.display = "none";
     let index = archive.months.length - 1;
     const show = (next) => { index = next; renderMonth(archive, index); };
-    document.getElementById("month-prev").addEventListener("click", () => { if (index > 0) show(index - 1); });
-    document.getElementById("month-next").addEventListener("click", () => { if (index < archive.months.length - 1) show(index + 1); });
-    document.getElementById("month-select").addEventListener("change", (event) => show(Number(event.target.value)));
+    if (archive.months.length >= 2) {
+      const nav = document.createElement("div");
+      nav.id = "month-nav";
+      nav.className = "mt-4 flex items-center justify-center gap-3";
+      const prev = document.createElement("button");
+      prev.id = "month-prev";
+      prev.className = "month-btn";
+      prev.type = "button";
+      prev.setAttribute("aria-label", "Previous month");
+      prev.textContent = "‹";
+      const select = document.createElement("select");
+      select.id = "month-select";
+      select.setAttribute("aria-label", "Reporting month");
+      const next = document.createElement("button");
+      next.id = "month-next";
+      next.className = "month-btn";
+      next.type = "button";
+      next.setAttribute("aria-label", "Next month");
+      next.textContent = "›";
+      nav.append(prev, select, next);
+      document.getElementById("nav-date").before(nav);
+      prev.addEventListener("click", () => { if (index > 0) show(index - 1); });
+      next.addEventListener("click", () => { if (index < archive.months.length - 1) show(index + 1); });
+      select.addEventListener("change", (event) => show(Number(event.target.value)));
+    }
     document.querySelectorAll(".table-toggle").forEach(button => {
       button.addEventListener("click", () => {
         const panel = document.getElementById(button.getAttribute("aria-controls"));
