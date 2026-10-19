@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@700&display=swap" rel="stylesheet">
   <style>
     body { background: #1A1230; font-family: 'Inter', sans-serif; color: #E0E7FF; }
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; }
     .glass-card {
       background: rgba(44, 26, 82, 0.4);
       border: 1px solid rgba(75, 45, 130, 0.6);
@@ -44,7 +45,46 @@
     .shared-6 { color: #FDBA74; }
     .shared-7 { color: #86EFAC; }
     .shared-8 { color: #FDA4AF; }
-    .aum-selected { background: rgba(192, 168, 255, 0.12); }
+    .table-card-head {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem;
+    }
+    .table-card-panel { margin-top: 1rem; }
+    .table-toggle {
+      flex: 0 0 auto; border-radius: 999px;
+      border: 1px solid rgba(192, 168, 255, 0.45); color: #C0A8FF;
+      background: rgba(44, 26, 82, 0.55); padding: 0.28rem 0.8rem;
+      font-size: 0.75rem; font-weight: 600; line-height: 1.2; cursor: pointer;
+    }
+    .table-toggle:focus-visible { outline: 2px solid #5EEAD4; outline-offset: 2px; }
+    .aum-figure { display: inline-flex; align-items: center; gap: 0.3rem; white-space: nowrap; }
+    .aum-arrow { display: inline-flex; width: 0.7rem; height: 0.7rem; flex: 0 0 auto; }
+    .aum-arrow path { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .aum-arrow.is-up { color: #5EEAD4; }
+    .aum-arrow.is-down { color: #FDA4AF; }
+    .aum-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.75rem; }
+    .aum-pill {
+      display: inline-flex; align-items: center; gap: 0.45rem; border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--swatch) 70%, white);
+      background: color-mix(in srgb, var(--swatch) 24%, transparent);
+      color: #E0E7FF; padding: 0.28rem 0.8rem 0.28rem 0.45rem; font-size: 0.875rem; line-height: 1.2; cursor: pointer;
+    }
+    .aum-swatch { width: 0.7rem; height: 0.7rem; border-radius: 999px; background: var(--swatch); flex: 0 0 auto; }
+    .aum-pill.is-off { background: transparent; border-color: rgba(224, 231, 255, 0.28); color: rgba(224, 231, 255, 0.45); }
+    .aum-pill:focus-visible { outline: 2px solid var(--swatch); outline-offset: 2px; }
+    .aum-series.is-off { display: none; }
+    .aum-chart { position: relative; }
+    #aum-chart { overflow: visible; }
+    .aum-guide { stroke: rgba(224, 231, 255, 0.28); stroke-width: 1; }
+    .aum-tip {
+      position: absolute; z-index: 2; pointer-events: none; display: none; flex-direction: column;
+      gap: 0.12rem; min-width: 9.5rem; padding: 0.4rem 0.55rem; border-radius: 0.45rem;
+      background: rgba(26, 18, 48, 0.94); border: 1px solid rgba(224, 231, 255, 0.22);
+      font-size: 12px; line-height: 1.3;
+    }
+    .aum-tip:not([hidden]) { display: flex; }
+    .aum-tip-month { color: #C0A8FF; font-size: 11px; font-weight: 600; margin-bottom: 0.1rem; }
+    .aum-tip-row { display: flex; justify-content: space-between; gap: 0.8rem; font-weight: 600; white-space: nowrap; }
+    .aum-tip-pct { font-variant-numeric: tabular-nums; }
   </style>
 </head>
 
@@ -68,137 +108,206 @@
     </div>
 
     <div class="glass-card">
-      <table class="w-full text-left">
-        <thead class="table-header"><tr><th class="p-2">Name</th><th class="p-2">ISIN</th><th class="p-2 text-right">AuM</th><th class="p-2 text-right">Factsheet</th></tr></thead>
-        <tbody id="directory-body" class="divide-y divide-white/5"></tbody>
-      </table>
+      <div class="table-card-head">
+        <h3 class="text-xl font-semibold text-light-purple">Directory</h3>
+        <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-directory" data-label="Directory" aria-label="Hide Directory">Hide</button>
+      </div>
+      <div id="panel-directory" class="table-card-panel">
+        <table class="w-full text-left">
+          <thead class="table-header"><tr><th class="p-2">Name</th><th class="p-2">ISIN</th><th class="p-2 text-right">AuM</th><th class="p-2 text-right">Factsheet</th></tr></thead>
+          <tbody id="directory-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
     </div>
 
     <div class="glass-card">
-      <h3 class="text-xl font-semibold mb-1 text-light-purple">Assets under management</h3>
-      <p class="text-xs opacity-60 mb-4">Percent change from each fund's first saved month. The first point is 0%. Symbiotics is the teal line.</p>
-      <svg id="aum-chart" class="w-full" viewBox="0 0 680 280" role="img" aria-label="Assets under management, percent change from each fund's first saved month"></svg>
-      <div class="overflow-x-auto mt-4">
+      <div class="table-card-head">
+        <h3 class="text-xl font-semibold text-light-purple">Assets under management, percent change from the first month</h3>
+        <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-aum" data-label="AuM chart" aria-label="Hide AuM chart">Hide</button>
+      </div>
+      <div id="panel-aum" class="table-card-panel">
+        <p class="text-xs opacity-60 mb-4">Each line is the percent change from that fund's own first saved month. The first point is 0%.</p>
+        <div class="aum-chart" id="aum-chart-root">
+          <div class="aum-pills" id="aum-pills" role="group" aria-label="Show or hide a fund"></div>
+          <svg id="aum-chart" class="w-full" viewBox="0 0 680 308" role="img" aria-label="Assets under management, percent change from each fund's first saved month"></svg>
+          <div class="aum-tip" role="tooltip" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card">
+        <div class="table-card-head">
+          <h3 class="text-xl font-semibold text-light-purple">Monthly Performance</h3>
+          <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-monthly" data-label="Monthly Performance" aria-label="Hide Monthly Performance">Hide</button>
+        </div>
+        <div id="panel-monthly" class="table-card-panel">
+          <table class="w-full text-left">
+            <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
+            <tbody id="monthly-body" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="table-card-head">
+          <h3 class="text-xl font-semibold text-light-purple">Year-to-Date (YTD)</h3>
+          <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-ytd" data-label="Year-to-Date" aria-label="Hide Year-to-Date">Hide</button>
+        </div>
+        <div id="panel-ytd" class="table-card-panel">
+          <table class="w-full text-left">
+            <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
+            <tbody id="ytd-body" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card">
+        <div class="table-card-head">
+          <h3 class="text-xl font-semibold text-light-purple">
+            Annualised Performance <span class="text-sm font-normal text-light-purple opacity-80">(since inception)</span>
+          </h3>
+          <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-annual" data-label="Annualised Performance" aria-label="Hide Annualised Performance">Hide</button>
+        </div>
+        <div id="panel-annual" class="table-card-panel">
+          <table class="w-full text-left">
+            <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
+            <tbody id="annual-body" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="glass-card">
+        <div class="table-card-head">
+          <h3 class="text-xl font-semibold text-light-purple">Volatility</h3>
+          <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-vol" data-label="Volatility" aria-label="Hide Volatility">Hide</button>
+        </div>
+        <div id="panel-vol" class="table-card-panel">
+          <table class="w-full text-left">
+            <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Vol.</th></tr></thead>
+            <tbody id="vol-body" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass-card">
+      <div class="table-card-head">
+        <h3 class="text-xl font-semibold text-light-purple">Cash</h3>
+        <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-cash" data-label="Cash" aria-label="Hide Cash">Hide</button>
+      </div>
+      <div id="panel-cash" class="table-card-panel">
+        <p class="text-xs opacity-60 mb-4">*Cost of cash assumes cash earns 0% over the period (cost = Cash% × YTD return).</p>
         <table class="w-full text-left">
-          <thead id="aum-head" class="table-header"></thead>
-          <tbody id="aum-body" class="divide-y divide-white/5"></tbody>
+          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Cash</th><th class="p-2 text-right">Cost of cash*</th></tr></thead>
+          <tbody id="cash-body" class="divide-y divide-white/5"></tbody>
         </table>
       </div>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="glass-card">
-        <h3 class="text-xl font-semibold mb-4 text-light-purple">Monthly Performance</h3>
-        <table class="w-full text-left">
-          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
-          <tbody id="monthly-body" class="divide-y divide-white/5"></tbody>
-        </table>
+        <div class="table-card-head">
+          <h3 class="text-xl font-semibold text-light-purple">Total Expense Ratio (TER)</h3>
+          <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-ter" data-label="Total Expense Ratio" aria-label="Hide Total Expense Ratio">Hide</button>
+        </div>
+        <div id="panel-ter" class="table-card-panel">
+          <table class="w-full text-left">
+            <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">TER</th></tr></thead>
+            <tbody id="ter-body" class="divide-y divide-white/5"></tbody>
+          </table>
+          <p id="ter-note" class="text-xs opacity-60 mt-3"></p>
+        </div>
       </div>
       <div class="glass-card">
-        <h3 class="text-xl font-semibold mb-4 text-light-purple">Year-to-Date (YTD)</h3>
-        <table class="w-full text-left">
-          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
-          <tbody id="ytd-body" class="divide-y divide-white/5"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="glass-card">
-        <h3 class="text-xl font-semibold mb-4 text-light-purple">
-          Annualised Performance <span class="text-sm font-normal text-light-purple opacity-80">(since inception)</span>
-        </h3>
-        <table class="w-full text-left">
-          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Return</th></tr></thead>
-          <tbody id="annual-body" class="divide-y divide-white/5"></tbody>
-        </table>
-      </div>
-      <div class="glass-card">
-        <h3 class="text-xl font-semibold mb-4 text-light-purple">Volatility</h3>
-        <table class="w-full text-left">
-          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Vol.</th></tr></thead>
-          <tbody id="vol-body" class="divide-y divide-white/5"></tbody>
-        </table>
+        <div class="table-card-head">
+          <h3 class="text-xl font-semibold text-light-purple">Weighted average duration</h3>
+          <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-wad" data-label="Weighted average duration" aria-label="Hide Weighted average duration">Hide</button>
+        </div>
+        <div id="panel-wad" class="table-card-panel">
+          <table class="w-full text-left">
+            <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">WAD</th></tr></thead>
+            <tbody id="wad-body" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
     <div class="glass-card">
-      <h3 class="text-xl font-semibold mb-2 text-light-purple">Cash</h3>
-      <p class="text-xs opacity-60 mb-4">*Cost of cash assumes cash earns 0% over the period (cost = Cash% × YTD return).</p>
-      <table class="w-full text-left">
-        <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Cash</th><th class="p-2 text-right">Cost of cash*</th></tr></thead>
-        <tbody id="cash-body" class="divide-y divide-white/5"></tbody>
-      </table>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="glass-card">
-        <h3 class="text-xl font-semibold mb-4 text-light-purple">Total Expense Ratio (TER)</h3>
-        <table class="w-full text-left">
-          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">TER</th></tr></thead>
-          <tbody id="ter-body" class="divide-y divide-white/5"></tbody>
-        </table>
-        <p id="ter-note" class="text-xs opacity-60 mt-3"></p>
+      <div class="table-card-head">
+        <h3 class="text-xl font-semibold text-light-purple">Diversification</h3>
+        <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-div" data-label="Diversification" aria-label="Hide Diversification">Hide</button>
       </div>
-      <div class="glass-card">
-        <h3 class="text-xl font-semibold mb-4 text-light-purple">Weighted average duration</h3>
-        <table class="w-full text-left">
-          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">WAD</th></tr></thead>
-          <tbody id="wad-body" class="divide-y divide-white/5"></tbody>
-        </table>
+      <div id="panel-div" class="table-card-panel">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">Investments</th><th class="p-2 text-right">Countries</th></tr></thead>
+            <tbody id="div-body" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
     <div class="glass-card">
-      <h3 class="text-xl font-semibold mb-4 text-light-purple">Diversification</h3>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2">Investments</th><th class="p-2 text-right">Countries</th></tr></thead>
-          <tbody id="div-body" class="divide-y divide-white/5"></tbody>
-        </table>
+      <div class="table-card-head">
+        <h3 class="text-xl font-semibold text-light-purple">Top Region Allocation</h3>
+        <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-regions" data-label="Top Region Allocation" aria-label="Hide Top Region Allocation">Hide</button>
+      </div>
+      <div id="panel-regions" class="table-card-panel">
+        <p class="text-xs opacity-60 mb-4">Colours highlight regions that recur across managers.</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead id="region-thead" class="table-header"></thead>
+            <tbody id="region-tbody" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
     <div class="glass-card">
-      <h3 class="text-xl font-semibold mb-1 text-light-purple">Top Region Allocation</h3>
-      <p class="text-xs opacity-60 mb-4">Colours highlight regions that recur across managers.</p>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead id="region-thead" class="table-header"></thead>
-          <tbody id="region-tbody" class="divide-y divide-white/5"></tbody>
-        </table>
+      <div class="table-card-head">
+        <h3 class="text-xl font-semibold text-light-purple">Top Country Allocation</h3>
+        <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-countries" data-label="Top Country Allocation" aria-label="Hide Top Country Allocation">Hide</button>
+      </div>
+      <div id="panel-countries" class="table-card-panel">
+        <p class="text-xs opacity-60 mb-4">Colours highlight countries that recur across managers.</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead id="country-thead" class="table-header"></thead>
+            <tbody id="country-tbody" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
     <div class="glass-card">
-      <h3 class="text-xl font-semibold mb-1 text-light-purple">Top Country Allocation</h3>
-      <p class="text-xs opacity-60 mb-4">Colours highlight countries that recur across managers.</p>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead id="country-thead" class="table-header"></thead>
-          <tbody id="country-tbody" class="divide-y divide-white/5"></tbody>
-        </table>
+      <div class="table-card-head">
+        <h3 class="text-xl font-semibold text-light-purple">Top Investees</h3>
+        <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-investees" data-label="Top Investees" aria-label="Hide Top Investees">Hide</button>
+      </div>
+      <div id="panel-investees" class="table-card-panel">
+        <p class="text-xs opacity-60 mb-4">Colours highlight investees that recur across managers.</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead id="investee-thead" class="table-header"></thead>
+            <tbody id="investee-tbody" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
     <div class="glass-card">
-      <h3 class="text-xl font-semibold mb-1 text-light-purple">Top Investees</h3>
-      <p class="text-xs opacity-60 mb-4">Colours highlight investees that recur across managers.</p>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead id="investee-thead" class="table-header"></thead>
-          <tbody id="investee-tbody" class="divide-y divide-white/5"></tbody>
-        </table>
+      <div class="table-card-head">
+        <h3 class="text-xl font-semibold text-light-purple">Impact Metrics</h3>
+        <button type="button" class="table-toggle" aria-expanded="true" aria-controls="panel-impact" data-label="Impact Metrics" aria-label="Hide Impact Metrics">Hide</button>
       </div>
-    </div>
-
-    <div class="glass-card">
-      <h3 class="text-xl font-semibold mb-4 text-light-purple">Impact Metrics</h3>
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead id="impact-thead" class="table-header"></thead>
-          <tbody id="impact-body" class="divide-y divide-white/5"></tbody>
-        </table>
+      <div id="panel-impact" class="table-card-panel">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left">
+            <thead id="impact-thead" class="table-header"></thead>
+            <tbody id="impact-body" class="divide-y divide-white/5"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -1099,20 +1208,70 @@
       (items || []).forEach(it => {
         const tr = document.createElement("tr");
         tr.appendChild(mkTd(managerFrom(it), "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
-        tr.appendChild(mkTd(it.investments ?? "n.a.", "p-2 tabular-nums", it.investments ?? "n.a."));
+        tr.appendChild(mkTd(it.investments ?? "n.a.", "p-2 text-right tabular-nums", it.investments ?? "n.a."));
         tr.appendChild(mkTd(it.countries ?? "n.a.", "p-2 text-right tabular-nums", it.countries ?? "n.a."));
         tbody.appendChild(tr);
       });
     }
 
-    function renderDirectory(directory) {
+    const CHART_LABELS = {
+      "BlueOrchard Microfinance": "BlueOrchard",
+      "EMF Microfinance Fund": "Enabling",
+      "responsAbility Micro and SME": "responsAbility",
+      "Symbiotics Emerging Credit": "Symbiotics"
+    };
+
+    function chartLabel(name) {
+      return CHART_LABELS[name] || name;
+    }
+
+    function aumDelta(history, entry, monthIso) {
+      const current = entry.aum_usd_m;
+      if (typeof current !== "number" || !isFinite(current)) return null;
+      const index = history.findIndex(month => month.month === monthIso);
+      if (index <= 0) return null;
+      const previous = history[index - 1];
+      const prior = (previous.funds || []).find(row => row.name === entry.name);
+      if (!prior || typeof prior.aum_usd_m !== "number" || prior.aum_usd_m === current) return null;
+      return {
+        direction: current > prior.aum_usd_m ? "up" : "down",
+        previousLabel: monthName(previous.month)
+      };
+    }
+
+    function aumTd(text, delta) {
+      const td = document.createElement("td");
+      td.className = "p-2 text-right tabular-nums";
+      if (text) td.title = text;
+      const figure = document.createElement("span");
+      figure.className = "aum-figure";
+      const label = document.createElement("span");
+      label.textContent = text || "n.a.";
+      figure.appendChild(label);
+      if (delta) {
+        const arrow = document.createElement("span");
+        arrow.className = "aum-arrow is-" + delta.direction;
+        arrow.setAttribute("role", "img");
+        arrow.setAttribute("aria-label", delta.direction + " from " + delta.previousLabel);
+        const svg = svgEl("svg", { viewBox: "0 0 12 12", width: "11", height: "11", "aria-hidden": "true" });
+        svg.appendChild(svgEl("path", {
+          d: delta.direction === "up" ? "M6 2.2v7.6M6 2.2 3 5.3M6 2.2l3 3.1" : "M6 9.8V2.2M6 9.8 3 6.7M6 9.8l3-3.1"
+        }));
+        arrow.appendChild(svg);
+        figure.appendChild(arrow);
+      }
+      td.appendChild(figure);
+      return td;
+    }
+
+    function renderDirectory(directory, history, monthIso) {
       const tbody = document.getElementById("directory-body");
       clear(tbody);
       (directory || []).forEach(d => {
         const tr = document.createElement("tr");
         tr.appendChild(mkTd(d.name ?? "n.a.", "p-2 truncate whitespace-nowrap max-w-[18rem]", d.name));
         tr.appendChild(mkTd(d.isin ?? "n.a.", "p-2 opacity-60", d.isin));
-        tr.appendChild(mkTd(d.aum ?? "n.a.", "p-2 text-right tabular-nums", d.aum));
+        tr.appendChild(aumTd(d.aum ?? "n.a.", aumDelta(history, d, monthIso)));
         const td = document.createElement("td");
         td.className = "p-2 text-right";
         if (d.url && d.url !== "n.a.") {
@@ -1239,16 +1398,17 @@
       return new Date(Date.UTC(year, month - 1, 1)).toLocaleString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
     }
 
+    const CHART_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    function chartMonthLabel(iso) {
+      const [year, month] = iso.split("-").map(Number);
+      return CHART_MONTHS[month - 1] + " " + String(year).slice(2);
+    }
+
     function svgEl(name, attrs) {
       const el = document.createElementNS("http://www.w3.org/2000/svg", name);
       Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
       return el;
-    }
-
-    function shortMonth(iso) {
-      const [year, month] = iso.split("-").map(Number);
-      const name = new Date(Date.UTC(year, month - 1, 1)).toLocaleString("en-GB", { month: "short", timeZone: "UTC" });
-      return name + " " + String(year).slice(2);
     }
 
     function aumHistory(archive) {
@@ -1301,15 +1461,211 @@
       return "0%";
     }
 
-    function renderAum(archive) {
+    function yOnAxis(value, axis, top, plotH) {
+      const span = (axis.max - axis.min) || 1;
+      return top + plotH - ((value - axis.min) / span) * plotH;
+    }
+
+    function relayoutAum(svg) {
+      const top = Number(svg.dataset.top);
+      const plotH = Number(svg.dataset.plotH);
+      const left = Number(svg.dataset.left);
+      const plotRight = Number(svg.dataset.plotRight);
+      const visible = Array.from(svg.querySelectorAll(".aum-series:not(.is-off) .aum-dot"));
+      const axis = percentAxis(visible.map(circle => Number(circle.dataset.pct)));
+      svg.querySelectorAll(".aum-series").forEach(group => {
+        const coords = [];
+        group.querySelectorAll(".aum-dot").forEach(circle => {
+          const y = yOnAxis(Number(circle.dataset.pct), axis, top, plotH);
+          circle.setAttribute("cy", y.toFixed(2));
+          coords.push(circle.dataset.x + "," + y.toFixed(2));
+        });
+        group.querySelectorAll("polyline").forEach(poly => {
+          if (coords.length >= 2) poly.setAttribute("points", coords.join(" "));
+        });
+      });
+      const yAxis = svg.querySelector(".y-axis");
+      if (!yAxis) return;
+      clear(yAxis);
+      axis.ticks.forEach(tick => {
+        const y = yOnAxis(tick, axis, top, plotH);
+        const g = svgEl("g", {});
+        g.appendChild(svgEl("line", {
+          x1: left, y1: y.toFixed(2), x2: plotRight, y2: y.toFixed(2), stroke: "rgba(224,231,255,0.08)"
+        }));
+        const text = svgEl("text", {
+          x: left - 8, y: (y + 4).toFixed(2), "text-anchor": "end", fill: "#C0A8FF", "font-size": "11"
+        });
+        text.textContent = formatPercent(tick);
+        g.appendChild(text);
+        yAxis.appendChild(g);
+      });
+    }
+
+    function bindAumChart(root) {
+      const svg = root.querySelector("svg");
+      const tip = root.querySelector(".aum-tip");
+      if (!svg || !tip) return;
+
+      function hideTip() {
+        tip.hidden = true;
+        clear(tip);
+        const guide = svg.querySelector(".aum-guide");
+        if (guide) guide.setAttribute("visibility", "hidden");
+      }
+
+      function monthColumns() {
+        const xs = [];
+        svg.querySelectorAll(".aum-dot").forEach(dot => {
+          const x = Number(dot.dataset.x);
+          if (!xs.some(item => Math.abs(item - x) < 0.5)) xs.push(x);
+        });
+        xs.sort((a, b) => a - b);
+        return xs;
+      }
+
+      function columnAt(svgX, svgY) {
+        const left = Number(svg.dataset.left);
+        const plotRight = Number(svg.dataset.plotRight);
+        const top = Number(svg.dataset.top);
+        const plotH = Number(svg.dataset.plotH);
+        const xs = monthColumns();
+        if (!xs.length) return null;
+        let nearest = xs[0];
+        let dist = Math.abs(svgX - nearest);
+        xs.forEach(x => {
+          const next = Math.abs(svgX - x);
+          if (next < dist) { nearest = x; dist = next; }
+        });
+        const gaps = xs.slice(1).map((x, i) => x - xs[i]);
+        const half = gaps.length ? Math.min.apply(null, gaps) / 2 : 48;
+        const inPlot = svgY >= top && svgY <= top + plotH && svgX >= left - 2 && svgX <= plotRight + 2;
+        const inLabels = svgY > top + plotH;
+        if (inPlot && dist <= half + 0.5) return nearest;
+        if (inLabels && dist <= Math.max(half, 72)) return nearest;
+        return null;
+      }
+
+      function pointerInSvg(event) {
+        const ctm = svg.getScreenCTM();
+        if (!ctm) return null;
+        const pt = svg.createSVGPoint();
+        pt.x = event.clientX;
+        pt.y = event.clientY;
+        const local = pt.matrixTransform(ctm.inverse());
+        return { x: local.x, y: local.y };
+      }
+
+      function svgToClient(x, y) {
+        const ctm = svg.getScreenCTM();
+        if (!ctm) return null;
+        const pt = svg.createSVGPoint();
+        pt.x = x;
+        pt.y = y;
+        return pt.matrixTransform(ctm);
+      }
+
+      function showMonth(x) {
+        const dots = Array.from(svg.querySelectorAll(".aum-series:not(.is-off) .aum-dot"))
+          .filter(dot => Math.abs(Number(dot.dataset.x) - x) < 0.5)
+          .sort((a, b) => Number(b.dataset.pct) - Number(a.dataset.pct));
+        if (!dots.length) { hideTip(); return; }
+        clear(tip);
+        const xlabel = Array.from(svg.querySelectorAll(".aum-xlabel")).find(label => Math.abs(Number(label.dataset.x) - x) < 0.5);
+        const heading = document.createElement("div");
+        heading.className = "aum-tip-month";
+        heading.textContent = (xlabel && xlabel.textContent || "").trim();
+        tip.appendChild(heading);
+        dots.forEach(dot => {
+          const row = document.createElement("div");
+          row.className = "aum-tip-row";
+          row.style.color = dot.getAttribute("fill") || "#E0E7FF";
+          const name = document.createElement("span");
+          name.textContent = dot.dataset.name || "";
+          const pct = document.createElement("span");
+          pct.className = "aum-tip-pct";
+          pct.textContent = dot.dataset.change || "";
+          row.appendChild(name);
+          row.appendChild(pct);
+          tip.appendChild(row);
+        });
+        tip.hidden = false;
+        const top = Number(svg.dataset.top);
+        const plotH = Number(svg.dataset.plotH);
+        const guide = svg.querySelector(".aum-guide");
+        if (guide) {
+          guide.setAttribute("x1", String(x));
+          guide.setAttribute("x2", String(x));
+          guide.setAttribute("y1", String(top));
+          guide.setAttribute("y2", String(top + plotH));
+          guide.removeAttribute("visibility");
+        }
+        const peak = dots.reduce((best, dot) => {
+          const y = Number(dot.getAttribute("cy"));
+          const r = Number(dot.getAttribute("r")) || 0;
+          return y < best.y ? { y: y, r: r } : best;
+        }, { y: Infinity, r: 0 });
+        const anchor = svgToClient(x, peak.y - peak.r);
+        if (!anchor) return;
+        const chartBox = root.getBoundingClientRect();
+        const tipW = tip.offsetWidth;
+        const tipH = tip.offsetHeight;
+        const margin = 6;
+        let left = anchor.x - chartBox.left - tipW / 2;
+        let topPx = anchor.y - chartBox.top - tipH - 8;
+        const maxLeft = Math.max(margin, chartBox.width - tipW - margin);
+        const maxTop = Math.max(margin, chartBox.height - tipH - margin);
+        if (left < margin || left > maxLeft) left = Math.min(Math.max(left, margin), maxLeft);
+        if (topPx < margin || topPx > maxTop) topPx = Math.min(Math.max(topPx, margin), maxTop);
+        tip.style.left = left + "px";
+        tip.style.top = topPx + "px";
+      }
+
+      function track(event) {
+        const local = pointerInSvg(event);
+        if (!local) { hideTip(); return; }
+        const x = columnAt(local.x, local.y);
+        if (x == null) hideTip();
+        else showMonth(x);
+      }
+
+      if (svg._track) {
+        svg.removeEventListener("pointermove", svg._track);
+        svg.removeEventListener("pointerleave", svg._hide);
+      }
+      svg._track = track;
+      svg._hide = hideTip;
+      svg.addEventListener("pointermove", track);
+      svg.addEventListener("pointerleave", hideTip);
+      root.querySelectorAll(".aum-pill").forEach(button => {
+        button.addEventListener("click", () => {
+          const nextVisible = button.getAttribute("aria-pressed") !== "true";
+          button.setAttribute("aria-pressed", String(nextVisible));
+          button.classList.toggle("is-off", !nextVisible);
+          const group = svg.querySelector('.aum-series[data-series="' + button.dataset.series + '"]');
+          if (group) {
+            group.classList.toggle("is-off", !nextVisible);
+            if (nextVisible) group.removeAttribute("aria-hidden");
+            else group.setAttribute("aria-hidden", "true");
+          }
+          hideTip();
+          relayoutAum(svg);
+        });
+      });
+      relayoutAum(svg);
+    }
+
+    function renderAum(archive, selectedIso) {
+      const root = document.getElementById("aum-chart-root");
       const svg = document.getElementById("aum-chart");
-      const thead = document.getElementById("aum-head");
-      const tbody = document.getElementById("aum-body");
-      clear(svg); clear(thead); clear(tbody);
+      const pills = document.getElementById("aum-pills");
+      const tip = root.querySelector(".aum-tip");
+      clear(svg);
+      clear(pills);
+      if (tip) { tip.hidden = true; clear(tip); }
       const history = aumHistory(archive);
       if (!history.length) return;
-      const latestFunds = history[history.length - 1].funds || [];
-      const order = latestFunds.map(d => d.name);
+      const order = (history[history.length - 1].funds || []).map(d => d.name);
       const percentsByName = new Map();
       order.forEach(name => {
         const present = [];
@@ -1325,66 +1681,95 @@
           pct: (point.aum / earliest.aum - 1) * 100
         })) : []);
       });
-      const selected = history.length - 1;
-      const head = document.createElement("tr");
-      head.appendChild(mkTd("Fund", "p-2"));
-      history.forEach((month, idx) => {
-        const cell = mkTd(shortMonth(month.month), "p-2 text-right tabular-nums");
-        if (idx === selected) cell.classList.add("aum-selected");
-        head.appendChild(cell);
-      });
-      thead.appendChild(head);
-      order.forEach(name => {
-        const tr = document.createElement("tr");
-        const row = latestFunds.find(d => d.name === name) || {};
-        tr.appendChild(mkTd(row.manager || name, "p-2", name));
-        const byIndex = new Map((percentsByName.get(name) || []).map(point => [point.monthIndex, point.pct]));
-        history.forEach((month, idx) => {
-          const text = byIndex.has(idx) ? formatChange(byIndex.get(idx)) : "n.a.";
-          const cell = mkTd(text, "p-2 text-right tabular-nums", text);
-          if (idx === selected) cell.classList.add("aum-selected");
-          tr.appendChild(cell);
-        });
-        tbody.appendChild(tr);
-      });
 
-      const width = 680, height = 280, left = 64, right = 16, top = 16, bottom = 36;
-      const allPct = [];
-      percentsByName.forEach(points => points.forEach(point => allPct.push(point.pct)));
-      const axis = percentAxis(allPct);
+      const width = 680, height = 308, left = 64, right = 52, top = 64, bottom = 44;
       const plotW = width - left - right;
       const plotH = height - top - bottom;
+      const plotRight = width - right;
       const xAt = i => history.length === 1 ? left + plotW / 2 : left + (plotW * i) / (history.length - 1);
-      const yAt = v => top + plotH - ((v - axis.min) / ((axis.max - axis.min) || 1)) * plotH;
+      const selectedIndex = history.findIndex(month => month.month === selectedIso);
+      const lines = order.map((name, index) => ({
+        index: index,
+        label: chartLabel(name),
+        color: AUM_COLORS[name] || "#E0E7FF",
+        thick: name.startsWith("Symbiotics"),
+        points: (percentsByName.get(name) || []).map(point => ({ x: xAt(point.monthIndex), pct: point.pct }))
+      }));
+
+      lines.forEach(line => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "aum-pill";
+        button.dataset.series = String(line.index);
+        button.setAttribute("aria-pressed", "true");
+        button.style.setProperty("--swatch", line.color);
+        const swatch = document.createElement("span");
+        swatch.className = "aum-swatch";
+        swatch.setAttribute("aria-hidden", "true");
+        button.appendChild(swatch);
+        button.appendChild(document.createTextNode(line.label));
+        pills.appendChild(button);
+      });
+
       svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+      svg.dataset.top = String(top);
+      svg.dataset.plotH = String(plotH);
+      svg.dataset.left = String(left);
+      svg.dataset.plotRight = String(plotRight);
       svg.appendChild(svgEl("line", { x1: left, y1: top, x2: left, y2: top + plotH, stroke: "rgba(224,231,255,0.25)" }));
-      svg.appendChild(svgEl("line", { x1: left, y1: top + plotH, x2: width - right, y2: top + plotH, stroke: "rgba(224,231,255,0.25)" }));
-      axis.ticks.forEach(tick => {
-        const y = yAt(tick);
-        svg.appendChild(svgEl("line", { x1: left, y1: y, x2: width - right, y2: y, stroke: "rgba(224,231,255,0.08)" }));
-        const label = svgEl("text", { x: left - 8, y: y + 4, "text-anchor": "end", fill: "#C0A8FF", "font-size": "11" });
-        label.textContent = formatPercent(tick);
-        svg.appendChild(label);
-      });
+      svg.appendChild(svgEl("line", { x1: left, y1: top + plotH, x2: plotRight, y2: top + plotH, stroke: "rgba(224,231,255,0.25)" }));
+      svg.appendChild(svgEl("g", { class: "y-axis" }));
       history.forEach((month, idx) => {
-        const label = svgEl("text", { x: xAt(idx), y: height - 12, "text-anchor": "middle", fill: idx === selected ? "#5EEAD4" : "#C0A8FF", "font-size": "11" });
-        label.textContent = shortMonth(month.month);
+        const label = svgEl("text", {
+          class: "aum-xlabel",
+          "data-x": xAt(idx),
+          x: xAt(idx),
+          y: height - 12,
+          "text-anchor": "middle",
+          fill: idx === selectedIndex ? "#5EEAD4" : "#C0A8FF",
+          "font-size": "11"
+        });
+        label.textContent = chartMonthLabel(month.month);
         svg.appendChild(label);
       });
-      order.forEach(name => {
-        const color = AUM_COLORS[name] || "#E0E7FF";
-        const thick = name.startsWith("Symbiotics");
-        const points = (percentsByName.get(name) || []).map(point => [xAt(point.monthIndex), yAt(point.pct)]);
-        if (points.length >= 2) {
-          svg.appendChild(svgEl("polyline", {
-            points: points.map(p => p.join(",")).join(" "),
-            fill: "none", stroke: color, "stroke-width": thick ? 3 : 2
+      lines.forEach(line => {
+        const group = svgEl("g", { class: "aum-series", "data-series": String(line.index), "data-name": line.label });
+        if (line.points.length >= 2) {
+          group.appendChild(svgEl("polyline", {
+            points: line.points.map(point => point.x + ",0").join(" "),
+            fill: "none",
+            stroke: line.color,
+            "stroke-width": line.thick ? 3 : 2,
+            "pointer-events": "none"
           }));
         }
-        points.forEach(([x, y]) => {
-          svg.appendChild(svgEl("circle", { cx: x, cy: y, r: thick ? 5 : 3.5, fill: color }));
+        line.points.forEach(point => {
+          group.appendChild(svgEl("circle", {
+            class: "aum-dot",
+            cx: point.x,
+            cy: 0,
+            r: line.thick ? 5 : 3.5,
+            fill: line.color,
+            "data-x": point.x,
+            "data-pct": point.pct,
+            "data-name": line.label,
+            "data-change": formatChange(point.pct),
+            "pointer-events": "none"
+          }));
         });
+        svg.appendChild(group);
       });
+      svg.appendChild(svgEl("line", { class: "aum-guide", visibility: "hidden", "pointer-events": "none" }));
+      svg.appendChild(svgEl("rect", {
+        class: "aum-hover",
+        x: 0,
+        y: top,
+        width: width,
+        height: height - top,
+        fill: "transparent",
+        "pointer-events": "all"
+      }));
+      bindAumChart(root);
     }
 
     function renderMonth(archive, index) {
@@ -1400,8 +1785,8 @@
       setText("insights-s1", p.insights_s1 || "");
       setText("insights-s2", p.insights_s2 || "");
       setText("ter-note", p.ter_note || "");
-      renderDirectory(p.directory || []);
-      renderAum(archive);
+      renderDirectory(p.directory || [], aumHistory(archive), p.month);
+      renderAum(archive, p.month);
       renderTwoCol("monthly-body", p.tables?.monthly?.items, p.tables?.monthly?.best_fund, "monthly");
       renderTwoCol("ytd-body", p.tables?.ytd?.items, p.tables?.ytd?.best_fund, "ytd");
       renderTwoCol("annual-body", p.tables?.annual?.items, p.tables?.annual?.best_fund, "annual");
@@ -1431,12 +1816,24 @@
     const archive = parsePayload();
     if (!archive.months) archive.months = [archive];
     const nav = document.getElementById("month-nav");
-    if (nav) nav.hidden = archive.months.length < 2;
+    if (nav && archive.months.length < 2) nav.style.display = "none";
     let index = archive.months.length - 1;
     const show = (next) => { index = next; renderMonth(archive, index); };
     document.getElementById("month-prev").addEventListener("click", () => { if (index > 0) show(index - 1); });
     document.getElementById("month-next").addEventListener("click", () => { if (index < archive.months.length - 1) show(index + 1); });
     document.getElementById("month-select").addEventListener("change", (event) => show(Number(event.target.value)));
+    document.querySelectorAll(".table-toggle").forEach(button => {
+      button.addEventListener("click", () => {
+        const panel = document.getElementById(button.getAttribute("aria-controls"));
+        const open = button.getAttribute("aria-expanded") !== "true";
+        button.setAttribute("aria-expanded", String(open));
+        if (panel) panel.hidden = !open;
+        const label = button.dataset.label || "section";
+        const verb = open ? "Hide" : "Show";
+        button.textContent = verb;
+        button.setAttribute("aria-label", verb + " " + label);
+      });
+    });
     show(index);
   })();
   </script>
