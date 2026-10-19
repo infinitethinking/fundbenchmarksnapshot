@@ -26,11 +26,25 @@
     table { table-layout: fixed; }
     tbody tr { transition: background-color 0.15s ease; cursor: default; }
     tbody tr:hover { background-color: rgba(192, 168, 255, 0.1) !important; }
-
+    .month-btn {
+      width: 2.5rem; height: 2.5rem; border-radius: 999px;
+      border: 1px solid rgba(192, 168, 255, 0.4); color: #C0A8FF; background: transparent;
+    }
+    .month-btn:disabled { opacity: 0.3; }
+    #month-select {
+      background: rgba(44, 26, 82, 0.6); color: #E0E7FF;
+      border: 1px solid rgba(192, 168, 255, 0.4); border-radius: 999px;
+      padding: 0.4rem 1rem;
+    }
     .shared-1 { color: #5EEAD4; }
     .shared-2 { color: #F472B6; }
     .shared-3 { color: #FBBF24; }
     .shared-4 { color: #93C5FD; }
+    .shared-5 { color: #C4B5FD; }
+    .shared-6 { color: #FDBA74; }
+    .shared-7 { color: #86EFAC; }
+    .shared-8 { color: #FDA4AF; }
+    .aum-selected { background: rgba(192, 168, 255, 0.12); }
   </style>
 </head>
 
@@ -38,6 +52,11 @@
   <div class="max-w-6xl mx-auto space-y-8">
     <header class="text-center">
       <h1 class="text-5xl font-extrabold text-light-purple">Fund Benchmark Snapshot</h1>
+      <div id="month-nav" class="mt-4 flex items-center justify-center gap-3">
+        <button id="month-prev" class="month-btn" type="button" aria-label="Previous month">‹</button>
+        <select id="month-select" aria-label="Reporting month"></select>
+        <button id="month-next" class="month-btn" type="button" aria-label="Next month">›</button>
+      </div>
       <p id="nav-date" class="mt-2 text-xl opacity-60"></p>
     </header>
 
@@ -48,7 +67,6 @@
       <div id="insights-s2" class="text-lg opacity-90 leading-relaxed font-normal"></div>
     </div>
 
-    <!-- Fund Directory -->
     <div class="glass-card">
       <table class="w-full text-left">
         <thead class="table-header"><tr><th class="p-2">Name</th><th class="p-2">ISIN</th><th class="p-2 text-right">AuM</th><th class="p-2 text-right">Factsheet</th></tr></thead>
@@ -56,7 +74,18 @@
       </table>
     </div>
 
-    <!-- Row 1 -->
+    <div class="glass-card">
+      <h3 class="text-xl font-semibold mb-1 text-light-purple">Assets under management</h3>
+      <p class="text-xs opacity-60 mb-4">Percent change from each fund's first saved month. The first point is 0%. Symbiotics is the teal line.</p>
+      <svg id="aum-chart" class="w-full" viewBox="0 0 680 280" role="img" aria-label="Assets under management, percent change from each fund's first saved month"></svg>
+      <div class="overflow-x-auto mt-4">
+        <table class="w-full text-left">
+          <thead id="aum-head" class="table-header"></thead>
+          <tbody id="aum-body" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="glass-card">
         <h3 class="text-xl font-semibold mb-4 text-light-purple">Monthly Performance</h3>
@@ -74,7 +103,6 @@
       </div>
     </div>
 
-    <!-- Row 2 -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="glass-card">
         <h3 class="text-xl font-semibold mb-4 text-light-purple">
@@ -94,7 +122,6 @@
       </div>
     </div>
 
-    <!-- Cash (bundled with cost of cash) -->
     <div class="glass-card">
       <h3 class="text-xl font-semibold mb-2 text-light-purple">Cash</h3>
       <p class="text-xs opacity-60 mb-4">*Cost of cash assumes cash earns 0% over the period (cost = Cash% × YTD return).</p>
@@ -104,7 +131,6 @@
       </table>
     </div>
 
-    <!-- Row 3: TER left, WAD right -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="glass-card">
         <h3 class="text-xl font-semibold mb-4 text-light-purple">Total Expense Ratio (TER)</h3>
@@ -112,6 +138,7 @@
           <thead class="table-header"><tr><th class="p-2">Fund</th><th class="p-2 text-right">TER</th></tr></thead>
           <tbody id="ter-body" class="divide-y divide-white/5"></tbody>
         </table>
+        <p id="ter-note" class="text-xs opacity-60 mt-3"></p>
       </div>
       <div class="glass-card">
         <h3 class="text-xl font-semibold mb-4 text-light-purple">Weighted average duration</h3>
@@ -122,7 +149,6 @@
       </div>
     </div>
 
-    <!-- Diversification -->
     <div class="glass-card">
       <h3 class="text-xl font-semibold mb-4 text-light-purple">Diversification</h3>
       <div class="overflow-x-auto">
@@ -133,10 +159,9 @@
       </div>
     </div>
 
-    <!-- Top Region Allocation -->
     <div class="glass-card">
       <h3 class="text-xl font-semibold mb-1 text-light-purple">Top Region Allocation</h3>
-<p class="text-xs opacity-60 mb-4">Colours highlight regions that recur across managers.</p>
+      <p class="text-xs opacity-60 mb-4">Colours highlight regions that recur across managers.</p>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead id="region-thead" class="table-header"></thead>
@@ -145,10 +170,9 @@
       </div>
     </div>
 
-    <!-- Top Country Allocation -->
     <div class="glass-card">
-    <h3 class="text-xl font-semibold mb-1 text-light-purple">Top Country Allocation</h3>
-<p class="text-xs opacity-60 mb-4">Colours highlight countries that recur across managers.</p>
+      <h3 class="text-xl font-semibold mb-1 text-light-purple">Top Country Allocation</h3>
+      <p class="text-xs opacity-60 mb-4">Colours highlight countries that recur across managers.</p>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead id="country-thead" class="table-header"></thead>
@@ -157,10 +181,9 @@
       </div>
     </div>
 
-    <!-- Top Investees -->
     <div class="glass-card">
       <h3 class="text-xl font-semibold mb-1 text-light-purple">Top Investees</h3>
-<p class="text-xs opacity-60 mb-4">Colours highlight investees that recur across managers.</p>
+      <p class="text-xs opacity-60 mb-4">Colours highlight investees that recur across managers.</p>
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead id="investee-thead" class="table-header"></thead>
@@ -169,7 +192,6 @@
       </div>
     </div>
 
-    <!-- Impact -->
     <div class="glass-card">
       <h3 class="text-xl font-semibold mb-4 text-light-purple">Impact Metrics</h3>
       <div class="overflow-x-auto">
@@ -187,13 +209,771 @@
   </div>
 
   <script type="application/json" id="payload">
-  {"nav_date": "Reporting date: 31 July 2026", "insights_s1": "Symbiotics led monthly performance with a return of 0.96%, outperforming responsAbility by 34 bps.", "insights_s2": "On a year-to-date basis, Symbiotics recorded the highest return of 4.30%, outperforming the peer average of 3.64%.", "directory": [{"name": "BlueOrchard Microfinance", "isin": "LU0973079543", "aum": "$3,523.0m", "url": "https://www.blueorchard.com/wp-content/uploads/report/bomf/BOMF_I_EN.pdf", "manager": "BlueOrchard"}, {"name": "EMF Microfinance Fund", "isin": "LI0542527226", "aum": "$798.6m", "url": "https://enabling.ch/media/attachments/2026/08/21/emf_institutional_factsheet_july_26-2.pdf", "manager": "Enabling"}, {"name": "responsAbility Micro and SME", "isin": "n.a.", "aum": "$651.8m", "url": "https://www.responsability.com/products/monthly/2026_07_DFI_EN.pdf", "manager": "responsAbility"}, {"name": "Symbiotics Emerging Credit", "isin": "LU1960396510", "aum": "$57.9m", "url": "https://symbiotics-am.com/wp-content/uploads/2026/08/LU-ECF-C-ACC-NH-USD-en-GB-2026-07-31.pdf", "manager": "Symbiotics ECF"}], "tables": {"monthly": {"items": [{"fund": "Symbiotics Emerging Credit", "manager": "Symbiotics ECF", "value": "0.96%"}, {"fund": "responsAbility Micro and SME", "manager": "responsAbility", "value": "0.62%"}, {"fund": "EMF Microfinance Fund", "manager": "Enabling", "value": "0.55%"}, {"fund": "BlueOrchard Microfinance", "manager": "BlueOrchard", "value": "0.46%"}]}, "ytd": {"items": [{"fund": "Symbiotics Emerging Credit", "manager": "Symbiotics ECF", "value": "4.30%"}, {"fund": "EMF Microfinance Fund", "manager": "Enabling", "value": "3.70%"}, {"fund": "responsAbility Micro and SME", "manager": "responsAbility", "value": "3.50%"}, {"fund": "BlueOrchard Microfinance", "manager": "BlueOrchard", "value": "3.11%"}]}, "annual": {"items": [{"fund": "EMF Microfinance Fund", "manager": "Enabling", "value": "5.55%"}, {"fund": "responsAbility Micro and SME", "manager": "responsAbility", "value": "4.53%"}, {"fund": "BlueOrchard Microfinance", "manager": "BlueOrchard", "value": "4.45%"}, {"fund": "Symbiotics Emerging Credit", "manager": "Symbiotics ECF", "value": "3.75%"}]}, "vol": {"items": [{"fund": "EMF Microfinance Fund", "manager": "Enabling", "value": "0.47%"}, {"fund": "BlueOrchard Microfinance", "manager": "BlueOrchard", "value": "0.48%"}, {"fund": "responsAbility Micro and SME", "manager": "responsAbility", "value": "0.73%"}, {"fund": "Symbiotics Emerging Credit", "manager": "Symbiotics ECF", "value": "0.95%"}]}, "ter": {"items": [{"fund": "Symbiotics Emerging Credit", "manager": "Symbiotics ECF", "value": "0.96%"}, {"fund": "responsAbility Micro and SME", "manager": "responsAbility", "value": "1.25%"}, {"fund": "BlueOrchard Microfinance", "manager": "BlueOrchard", "value": "1.34%"}, {"fund": "EMF Microfinance Fund", "manager": "Enabling", "value": "n.a."}]}, "wad": {"items": [{"fund": "EMF Microfinance Fund", "manager": "Enabling", "value": "18.7mo"}, {"fund": "Symbiotics Emerging Credit", "manager": "Symbiotics ECF", "value": "23.4mo"}, {"fund": "responsAbility Micro and SME", "manager": "responsAbility", "value": "24.0mo"}, {"fund": "BlueOrchard Microfinance", "manager": "BlueOrchard", "value": "25.0mo"}]}, "cash": {"items": [{"fund": "responsAbility Micro and SME", "manager": "responsAbility", "value": "0.50%"}, {"fund": "BlueOrchard Microfinance", "manager": "BlueOrchard", "value": "4.00%"}, {"fund": "Symbiotics Emerging Credit", "manager": "Symbiotics ECF", "value": "5.70%"}, {"fund": "EMF Microfinance Fund", "manager": "Enabling", "value": "n.a."}]}, "div": {"items": [{"fund": "responsAbility Micro and SME", "manager": "responsAbility", "countries": "54", "investments": "173"}, {"fund": "BlueOrchard Microfinance", "manager": "BlueOrchard", "countries": "54", "investments": "161"}, {"fund": "EMF Microfinance Fund", "manager": "Enabling", "countries": "46", "investments": "149"}, {"fund": "Symbiotics Emerging Credit", "manager": "Symbiotics ECF", "countries": "41", "investments": "94"}]}, "regions": {"funds": ["BlueOrchard Microfinance", "EMF Microfinance Fund", "responsAbility Micro and SME", "Symbiotics Emerging Credit"], "rows": [{"values": ["Caucasus (17.9%)", "Central Asia (23.0%)", "Central Asia (28.1%)", "Eurasia (33.8%)"], "group_ids": [null, 1, 1, null]}, {"values": ["Central Asia (15.2%)", "South America (18.2%)", "Eastern Europe (15.9%)", "Latin America (29.0%)"], "group_ids": [1, 2, null, 2]}, {"values": ["South Asia (12.9%)", "South Asia (14.9%)", "South America (11.5%)", "Asia (16.9%)"], "group_ids": [3, 3, 2, null]}]}, "top_country": {"funds": ["BlueOrchard Microfinance", "EMF Microfinance Fund", "responsAbility Micro and SME", "Symbiotics Emerging Credit"], "rows": [{"values": ["Georgia (8.5%)", "Uzbekistan (n.a.)", "India (8.4%)", "India (7.2%)"], "group_ids": [1, 2, 3, 3]}, {"values": ["India (8.4%)", "Ecuador (n.a.)", "Georgia (7.1%)", "Georgia (6.0%)"], "group_ids": [3, null, 1, 1]}, {"values": ["Uzbekistan (7.7%)", "India (n.a.)", "Uzbekistan (7.0%)", "Uzbekistan (5.2%)"], "group_ids": [2, 3, 2, 2]}, {"values": ["Mongolia (5.4%)", "Mongolia (n.a.)", "Turkey (6.9%)", "Mexico (5.0%)"], "group_ids": [4, 4, null, null]}, {"values": ["Kazakhstan (3.9%)", "Azerbaijan (n.a.)", "Romania (5.3%)", "Armenia (4.8%)"], "group_ids": [null, null, null, null]}]}, "investees": {"funds": ["BlueOrchard Microfinance", "EMF Microfinance Fund", "responsAbility Micro and SME", "Symbiotics Emerging Credit"], "rows": [{"values": ["KMF BANK (3.0%)", "UniBank (2.5%)", "ArmeconomBank (2.8%)", "Banco Continental (2.6%)"], "group_ids": [null, null, null, null]}, {"values": ["PROCREDIT (2.9%)", "Ueno Bank (2.3%)", "Agricover (2.6%)", "Ameriabank (2.2%)"], "group_ids": [null, null, null, null]}, {"values": ["CREDO BANK (2.6%)", "Davr Bank (2.1%)", "Credo (2.6%)", "Promerica CR (2.0%)"], "group_ids": [1, null, 1, null]}, {"values": ["KHAN BANK (2.6%)", "BOGD BANK (2.0%)", "Hamkor (2.4%)", "AVLA Bermuda (1.9%)"], "group_ids": [null, null, 2, null]}, {"values": ["HAMKORBANK (2.4%)", "LB Finance (1.9%)", "IPAK YULI (2.4%)", "CMAC Huancayo (1.9%)"], "group_ids": [2, null, null, null]}]}, "impact": {"items": [{"fund": "BlueOrchard Microfinance", "borrowers": "1,091,649", "loan": "$7,680", "rural": "63.0%", "women": "68.0%"}, {"fund": "EMF Microfinance Fund", "borrowers": "585,905", "loan": "$2,161", "rural": "54.0%", "women": "63.0%"}, {"fund": "responsAbility Micro and SME", "borrowers": "n.a.", "loan": "n.a.", "rural": "n.a.", "women": "n.a."}, {"fund": "Symbiotics Emerging Credit", "borrowers": "37,638", "loan": "$4,065", "rural": "47.2%", "women": "65.4%"}]}}}
+{
+  "months": [
+    {
+      "month": "2026-08",
+      "reporting_date": "2026-08-31",
+      "nav_date": "Reporting date: 31 August 2026",
+      "insights_s1": "In August, Symbiotics returned 1.07%, 53 bps ahead of Enabling (0.54%), the strongest of the other three.",
+      "insights_s2": "Year to date, Symbiotics leads at 5.42%, 1.45% above the 3.97% average of the other three, and 1.15% ahead of the next, Enabling (4.27%).",
+      "ter_note": "",
+      "directory": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "isin": "LU0973079543",
+          "aum": "$3,561.9m",
+          "aum_usd_m": 3561.9,
+          "url": "",
+          "manager": "BlueOrchard"
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "isin": "LI0542527226",
+          "aum": "$804.7m",
+          "aum_usd_m": 804.7,
+          "url": "https://enabling.ch/media/attachments/2026/09/16/emf_institutional_factsheet_august_26.pdf",
+          "manager": "Enabling"
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "isin": "n.a.",
+          "aum": "$655.5m",
+          "aum_usd_m": 655.5,
+          "url": "https://www.responsability.com/products/monthly/2026_08_DFI_EN.pdf",
+          "manager": "responsAbility"
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "isin": "LU1960396510",
+          "aum": "$60.3m",
+          "aum_usd_m": 60.3,
+          "url": "https://symbiotics-am.com/wp-content/uploads/2026/09/LU-ECF-C-ACC-NH-USD-en-GB-2026-08-31.pdf",
+          "manager": "Symbiotics ECF"
+        }
+      ],
+      "tables": {
+        "monthly": {
+          "items": [
+            {
+              "fund": "Symbiotics Emerging Credit",
+              "manager": "Symbiotics ECF",
+              "value": "1.07%"
+            },
+            {
+              "fund": "EMF Microfinance Fund",
+              "manager": "Enabling",
+              "value": "0.54%"
+            },
+            {
+              "fund": "BlueOrchard Microfinance",
+              "manager": "BlueOrchard",
+              "value": "0.50%"
+            },
+            {
+              "fund": "responsAbility Micro and SME",
+              "manager": "responsAbility",
+              "value": "0.50%"
+            }
+          ]
+        },
+        "ytd": {
+          "items": [
+            {
+              "fund": "Symbiotics Emerging Credit",
+              "manager": "Symbiotics ECF",
+              "value": "5.42%"
+            },
+            {
+              "fund": "EMF Microfinance Fund",
+              "manager": "Enabling",
+              "value": "4.27%"
+            },
+            {
+              "fund": "responsAbility Micro and SME",
+              "manager": "responsAbility",
+              "value": "4.02%"
+            },
+            {
+              "fund": "BlueOrchard Microfinance",
+              "manager": "BlueOrchard",
+              "value": "3.62%"
+            }
+          ]
+        },
+        "annual": {
+          "items": [
+            {
+              "fund": "Symbiotics Emerging Credit",
+              "manager": "Symbiotics ECF",
+              "value": "7.52%"
+            },
+            {
+              "fund": "EMF Microfinance Fund",
+              "manager": "Enabling",
+              "value": "5.57%"
+            },
+            {
+              "fund": "responsAbility Micro and SME",
+              "manager": "responsAbility",
+              "value": "4.54%"
+            },
+            {
+              "fund": "BlueOrchard Microfinance",
+              "manager": "BlueOrchard",
+              "value": "4.46%"
+            }
+          ]
+        },
+        "vol": {
+          "items": [
+            {
+              "fund": "EMF Microfinance Fund",
+              "manager": "Enabling",
+              "value": "0.46%"
+            },
+            {
+              "fund": "BlueOrchard Microfinance",
+              "manager": "BlueOrchard",
+              "value": "0.48%"
+            },
+            {
+              "fund": "responsAbility Micro and SME",
+              "manager": "responsAbility",
+              "value": "0.71%"
+            },
+            {
+              "fund": "Symbiotics Emerging Credit",
+              "manager": "Symbiotics ECF",
+              "value": "1.17%"
+            }
+          ]
+        },
+        "ter": {
+          "items": [
+            {
+              "fund": "Symbiotics Emerging Credit",
+              "manager": "Symbiotics ECF",
+              "value": "0.96%",
+              "note": "as of 2025-03-31"
+            },
+            {
+              "fund": "responsAbility Micro and SME",
+              "manager": "responsAbility",
+              "value": "1.25%"
+            },
+            {
+              "fund": "BlueOrchard Microfinance",
+              "manager": "BlueOrchard",
+              "value": "1.34%",
+              "note": "as of 2025-06-30"
+            },
+            {
+              "fund": "EMF Microfinance Fund",
+              "manager": "Enabling",
+              "value": "n.a."
+            }
+          ]
+        },
+        "wad": {
+          "items": [
+            {
+              "fund": "EMF Microfinance Fund",
+              "manager": "Enabling",
+              "value": "16.7mo"
+            },
+            {
+              "fund": "responsAbility Micro and SME",
+              "manager": "responsAbility",
+              "value": "22.8mo"
+            },
+            {
+              "fund": "Symbiotics Emerging Credit",
+              "manager": "Symbiotics ECF",
+              "value": "23.0mo"
+            },
+            {
+              "fund": "BlueOrchard Microfinance",
+              "manager": "BlueOrchard",
+              "value": "26.0mo"
+            }
+          ]
+        },
+        "cash": {
+          "items": [
+            {
+              "fund": "BlueOrchard Microfinance",
+              "manager": "BlueOrchard",
+              "value": "3.00%"
+            },
+            {
+              "fund": "responsAbility Micro and SME",
+              "manager": "responsAbility",
+              "value": "5.00%"
+            },
+            {
+              "fund": "Symbiotics Emerging Credit",
+              "manager": "Symbiotics ECF",
+              "value": "11.10%"
+            },
+            {
+              "fund": "EMF Microfinance Fund",
+              "manager": "Enabling",
+              "value": "n.a."
+            }
+          ]
+        },
+        "div": {
+          "items": [
+            {
+              "fund": "responsAbility Micro and SME",
+              "manager": "responsAbility",
+              "countries": "54",
+              "investments": "176"
+            },
+            {
+              "fund": "BlueOrchard Microfinance",
+              "manager": "BlueOrchard",
+              "countries": "54",
+              "investments": "163"
+            },
+            {
+              "fund": "EMF Microfinance Fund",
+              "manager": "Enabling",
+              "countries": "46",
+              "investments": "152"
+            },
+            {
+              "fund": "Symbiotics Emerging Credit",
+              "manager": "Symbiotics ECF",
+              "countries": "41",
+              "investments": "96"
+            }
+          ]
+        },
+        "regions": {
+          "funds": [
+            "BlueOrchard Microfinance",
+            "EMF Microfinance Fund",
+            "responsAbility Micro and SME",
+            "Symbiotics Emerging Credit"
+          ],
+          "rows": [
+            {
+              "values": [
+                "Caucasus (18.9%)",
+                "Central Asia (23.7%)",
+                "Central Asia (28.9%)",
+                "Eurasia (31.6%)"
+              ],
+              "group_ids": [
+                null,
+                1,
+                1,
+                null
+              ]
+            },
+            {
+              "values": [
+                "Central Asia (14.8%)",
+                "South America (17.8%)",
+                "Eastern Europe (16.2%)",
+                "Latin America (27.0%)"
+              ],
+              "group_ids": [
+                1,
+                2,
+                null,
+                null
+              ]
+            },
+            {
+              "values": [
+                "Central America and The Caribbean (12.9%)",
+                "South Asia (14.5%)",
+                "South America (11.8%)",
+                "Asia (16.2%)"
+              ],
+              "group_ids": [
+                null,
+                null,
+                2,
+                null
+              ]
+            }
+          ]
+        },
+        "top_country": {
+          "funds": [
+            "BlueOrchard Microfinance",
+            "EMF Microfinance Fund",
+            "responsAbility Micro and SME",
+            "Symbiotics Emerging Credit"
+          ],
+          "rows": [
+            {
+              "values": [
+                "Georgia (8.6%)",
+                "Uzbekistan (n.a.)",
+                "India (8.3%)",
+                "India (6.9%)"
+              ],
+              "group_ids": [
+                1,
+                2,
+                3,
+                3
+              ]
+            },
+            {
+              "values": [
+                "India (8.2%)",
+                "Ecuador (n.a.)",
+                "Georgia (7.1%)",
+                "Georgia (5.3%)"
+              ],
+              "group_ids": [
+                3,
+                null,
+                1,
+                1
+              ]
+            },
+            {
+              "values": [
+                "Uzbekistan (7.4%)",
+                "India (n.a.)",
+                "Uzbekistan (7.0%)",
+                "Uzbekistan (5.1%)"
+              ],
+              "group_ids": [
+                2,
+                3,
+                2,
+                2
+              ]
+            },
+            {
+              "values": [
+                "Mongolia (5.4%)",
+                "Mongolia (n.a.)",
+                "Turkey (6.8%)",
+                "Mexico (4.9%)"
+              ],
+              "group_ids": [
+                4,
+                4,
+                null,
+                null
+              ]
+            },
+            {
+              "values": [
+                "Kazakhstan (4.0%)",
+                "Azerbaijan (n.a.)",
+                "Romania (5.3%)",
+                "Armenia (4.7%)"
+              ],
+              "group_ids": [
+                null,
+                null,
+                null,
+                null
+              ]
+            }
+          ]
+        },
+        "investees": {
+          "funds": [
+            "BlueOrchard Microfinance",
+            "EMF Microfinance Fund",
+            "responsAbility Micro and SME",
+            "Symbiotics Emerging Credit"
+          ],
+          "rows": [
+            {
+              "values": [
+                "KMF BANK (3.0%)",
+                "UniBank (2.5%)",
+                "ArmeconomBank (2.7%)",
+                "Banco Continental (2.5%)"
+              ],
+              "group_ids": [
+                null,
+                null,
+                null,
+                null
+              ]
+            },
+            {
+              "values": [
+                "PROCREDIT HOLDING (2.9%)",
+                "Ueno Bank (2.3%)",
+                "Agricover (2.6%)",
+                "Ameriabank (2.1%)"
+              ],
+              "group_ids": [
+                null,
+                null,
+                null,
+                null
+              ]
+            },
+            {
+              "values": [
+                "CREDO BANK (2.6%)",
+                "Davr Bank (2.1%)",
+                "Credo (2.6%)",
+                "Promerica CR (1.9%)"
+              ],
+              "group_ids": [
+                1,
+                null,
+                1,
+                null
+              ]
+            },
+            {
+              "values": [
+                "KHAN BANK (2.6%)",
+                "Bogd Bank (2.0%)",
+                "Hamkor (2.4%)",
+                "CMAC Huancayo (1.9%)"
+              ],
+              "group_ids": [
+                null,
+                null,
+                2,
+                null
+              ]
+            },
+            {
+              "values": [
+                "HAMKORBANK (2.4%)",
+                "CoopeAnde (1.9%)",
+                "IPAK YULI (2.4%)",
+                "AVLA Bermuda Holding (1.8%)"
+              ],
+              "group_ids": [
+                2,
+                null,
+                null,
+                null
+              ]
+            }
+          ]
+        },
+        "impact": {
+          "items": [
+            {
+              "fund": "BlueOrchard Microfinance",
+              "borrowers": "1,054,828",
+              "loan": "$7,084",
+              "rural": "63.0%",
+              "women": "72.0%"
+            },
+            {
+              "fund": "EMF Microfinance Fund",
+              "borrowers": "587,455",
+              "loan": "$2,170",
+              "rural": "52.0%",
+              "women": "63.0%"
+            },
+            {
+              "fund": "responsAbility Micro and SME",
+              "borrowers": "n.a.",
+              "loan": "n.a.",
+              "rural": "n.a.",
+              "women": "n.a."
+            },
+            {
+              "fund": "Symbiotics Emerging Credit",
+              "borrowers": "37,649",
+              "loan": "$4,195",
+              "rural": "47.0%",
+              "women": "65.2%"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "aum": [
+    {
+      "month": "2025-12",
+      "funds": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "manager": "BlueOrchard",
+          "aum": "$3,198.7m",
+          "aum_usd_m": 3198.7
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "manager": "Enabling",
+          "aum": "$726.7m",
+          "aum_usd_m": 726.7
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "manager": "responsAbility",
+          "aum": "$621.7m",
+          "aum_usd_m": 621.7
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "manager": "Symbiotics ECF",
+          "aum": "$55.2m",
+          "aum_usd_m": 55.2
+        }
+      ]
+    },
+    {
+      "month": "2026-01",
+      "funds": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "manager": "BlueOrchard",
+          "aum": "$3,266.0m",
+          "aum_usd_m": 3266.0
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "manager": "Enabling",
+          "aum": "$738.4m",
+          "aum_usd_m": 738.4
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "manager": "responsAbility",
+          "aum": "$636.6m",
+          "aum_usd_m": 636.6
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "manager": "Symbiotics ECF",
+          "aum": "$55.5m",
+          "aum_usd_m": 55.5
+        }
+      ]
+    },
+    {
+      "month": "2026-02",
+      "funds": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "manager": "BlueOrchard",
+          "aum": "$3,330.6m",
+          "aum_usd_m": 3330.6
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "manager": "Enabling",
+          "aum": "$789.9m",
+          "aum_usd_m": 789.9
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "manager": "responsAbility",
+          "aum": "$661.4m",
+          "aum_usd_m": 661.4
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "manager": "Symbiotics ECF",
+          "aum": "$56.3m",
+          "aum_usd_m": 56.3
+        }
+      ]
+    },
+    {
+      "month": "2026-03",
+      "funds": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "manager": "BlueOrchard",
+          "aum": "$3,316.7m",
+          "aum_usd_m": 3316.7
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "manager": "Enabling",
+          "aum": "$810.2m",
+          "aum_usd_m": 810.2
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "manager": "responsAbility",
+          "aum": "$644.2m",
+          "aum_usd_m": 644.2
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "manager": "Symbiotics ECF",
+          "aum": "$55.8m",
+          "aum_usd_m": 55.8
+        }
+      ]
+    },
+    {
+      "month": "2026-04",
+      "funds": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "manager": "BlueOrchard",
+          "aum": "$3,461.3m",
+          "aum_usd_m": 3461.3
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "manager": "Enabling",
+          "aum": "$820.4m",
+          "aum_usd_m": 820.4
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "manager": "responsAbility",
+          "aum": "$660.5m",
+          "aum_usd_m": 660.5
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "manager": "Symbiotics ECF",
+          "aum": "$56.8m",
+          "aum_usd_m": 56.8
+        }
+      ]
+    },
+    {
+      "month": "2026-05",
+      "funds": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "manager": "BlueOrchard",
+          "aum": "$3,527.6m",
+          "aum_usd_m": 3527.6
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "manager": "Enabling",
+          "aum": "$813.8m",
+          "aum_usd_m": 813.8
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "manager": "responsAbility",
+          "aum": "$652.3m",
+          "aum_usd_m": 652.3
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "manager": "Symbiotics ECF",
+          "aum": "$56.9m",
+          "aum_usd_m": 56.9
+        }
+      ]
+    },
+    {
+      "month": "2026-06",
+      "funds": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "manager": "BlueOrchard",
+          "aum": "$3,477.7m",
+          "aum_usd_m": 3477.7
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "manager": "Enabling",
+          "aum": "$793.9m",
+          "aum_usd_m": 793.9
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "manager": "responsAbility",
+          "aum": "$643.4m",
+          "aum_usd_m": 643.4
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "manager": "Symbiotics ECF",
+          "aum": "$57.4m",
+          "aum_usd_m": 57.4
+        }
+      ]
+    },
+    {
+      "month": "2026-07",
+      "funds": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "manager": "BlueOrchard",
+          "aum": "$3,523.0m",
+          "aum_usd_m": 3523.0
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "manager": "Enabling",
+          "aum": "$798.6m",
+          "aum_usd_m": 798.6
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "manager": "responsAbility",
+          "aum": "$651.8m",
+          "aum_usd_m": 651.8
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "manager": "Symbiotics ECF",
+          "aum": "$57.9m",
+          "aum_usd_m": 57.9
+        }
+      ]
+    },
+    {
+      "month": "2026-08",
+      "funds": [
+        {
+          "name": "BlueOrchard Microfinance",
+          "manager": "BlueOrchard",
+          "aum": "$3,561.9m",
+          "aum_usd_m": 3561.9
+        },
+        {
+          "name": "EMF Microfinance Fund",
+          "manager": "Enabling",
+          "aum": "$804.7m",
+          "aum_usd_m": 804.7
+        },
+        {
+          "name": "responsAbility Micro and SME",
+          "manager": "responsAbility",
+          "aum": "$655.5m",
+          "aum_usd_m": 655.5
+        },
+        {
+          "name": "Symbiotics Emerging Credit",
+          "manager": "Symbiotics ECF",
+          "aum": "$60.3m",
+          "aum_usd_m": 60.3
+        }
+      ]
+    }
+  ]
+}
   </script>
 
   <script>
   (function () {
     const HILITE = "text-teal-300 font-bold";
     const HILITE_TABLES = new Set(["monthly","ytd","annual","vol","wad","ter","cash"]);
+    const AUM_COLORS = {
+      "BlueOrchard Microfinance": "#93C5FD",
+      "EMF Microfinance Fund": "#FBBF24",
+      "responsAbility Micro and SME": "#F472B6",
+      "Symbiotics Emerging Credit": "#5EEAD4"
+    };
 
     function parsePayload() {
       const el = document.getElementById("payload");
@@ -250,13 +1030,10 @@
 
     function mkTdShared2Line(text, className, groupId, titleText, lowerLabel) {
       const td = document.createElement("td");
-      const g = (groupId === 1 || groupId === 2 || groupId === 3 || groupId === 4) ? (" shared-" + groupId) : "";
+      const g = (groupId >= 1 && groupId <= 8) ? (" shared-" + groupId) : "";
       td.className = className + g;
-
       const { label, pct } = splitLabelPct(text);
       const lab = lowerLabel ? (label ?? "").toLowerCase() : (label ?? "");
-      const pctTxt = pct ?? "";
-
       const d1 = document.createElement("div");
       d1.className = "leading-tight";
       const l1 = document.createElement("div");
@@ -264,11 +1041,10 @@
       l1.textContent = (lab ?? "").trim() === "" ? "n.a." : lab;
       const l2 = document.createElement("div");
       l2.className = "opacity-70 tabular-nums";
-      l2.textContent = pctTxt;
+      l2.textContent = pct ?? "";
       d1.appendChild(l1);
       d1.appendChild(l2);
       td.appendChild(d1);
-
       if (titleText) td.title = titleText;
       return td;
     }
@@ -283,12 +1059,12 @@
       clear(tbody);
       (items || []).forEach((it, idx) => {
         const tr = document.createElement("tr");
-        if (HILITE_TABLES.has(tableKey) && idx === 0) tr.className = HILITE;
+        if (HILITE_TABLES.has(tableKey) && idx === 0 && (it.value ?? "").toLowerCase() !== "n.a.") tr.className = HILITE;
         if (bestFund && it.fund === bestFund && HILITE_TABLES.has(tableKey)) {
           tr.className = tr.className ? (tr.className + " " + HILITE) : HILITE;
         }
         tr.appendChild(mkTd(managerFrom(it), "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
-        tr.appendChild(mkTd(it.value, "p-2 text-right tabular-nums", it.value));
+        tr.appendChild(mkTd(it.value, "p-2 text-right tabular-nums", it.note || it.value));
         tbody.appendChild(tr);
       });
     }
@@ -296,29 +1072,22 @@
     function renderCashBundled(p) {
       const tbody = document.getElementById("cash-body");
       clear(tbody);
-
       const cashItems = p.tables?.cash?.items || [];
       const ytdItems  = p.tables?.ytd?.items  || [];
-
       const ytdMap = new Map();
       ytdItems.forEach(it => ytdMap.set(it.fund, it.value));
-
       cashItems.forEach((it, idx) => {
         const tr = document.createElement("tr");
-        if (idx === 0) tr.className = HILITE;
-
+        if (idx === 0 && (it.value ?? "").toLowerCase() !== "n.a.") tr.className = HILITE;
         tr.appendChild(mkTd(managerFrom(it), "p-2 truncate whitespace-nowrap max-w-[18rem]", it.fund));
         tr.appendChild(mkTd(it.value ?? "n.a.", "p-2 text-right tabular-nums", it.value));
-
         const cashPct = parsePctValue(it.value);
         const ytdPct  = parsePctValue(ytdMap.get(it.fund));
-
         let out = "n.a.";
         if (cashPct != null && ytdPct != null) {
           const costBps = (cashPct / 100) * (ytdPct / 100) * 10000;
-          out = fmtBps1(costBps);  // bps ONLY
+          out = fmtBps1(costBps);
         }
-
         tr.appendChild(mkTd(out, "p-2 text-right tabular-nums", out));
         tbody.appendChild(tr);
       });
@@ -366,48 +1135,33 @@
       const thead = document.getElementById(theadId);
       const tbody = document.getElementById(tbodyId);
       clear(thead); clear(tbody);
-
       const funds = block?.funds || [];
       const rows = block?.rows || [];
-
       const useRows = [];
-      for (let i = 0; i < wantN; i++) {
-        useRows.push(rows[i] || { values: [], group_ids: [] });
-      }
-
+      for (let i = 0; i < wantN; i++) useRows.push(rows[i] || { values: [], group_ids: [] });
       const trh = document.createElement("tr");
       trh.appendChild(mkTd("", "p-2"));
-      funds.forEach(f => {
-        const mgr = managerMap.get(f) || f;
-        trh.appendChild(mkTd(mgr, "p-2", f));
-      });
+      funds.forEach(f => trh.appendChild(mkTd(managerMap.get(f) || f, "p-2", f)));
       thead.appendChild(trh);
-
       const totals = funds.map((_, colIdx) => {
-        let total = 0;
-        let ok = false;
+        let total = 0, ok = false;
         useRows.forEach(r => {
-          const v = (r.values || [])[colIdx] ?? "n.a.";
-          const p = pctVal(v);
+          const p = pctVal((r.values || [])[colIdx] ?? "n.a.");
           if (p != null) { total += p; ok = true; }
         });
         return ok ? fmtPct1(total) : "n.a.";
       });
-
       useRows.forEach((r, rowIdx) => {
         const tr = document.createElement("tr");
         tr.appendChild(mkTd(labelPrefix + " " + (rowIdx + 1), "p-2 opacity-80"));
-
         const values = r.values || [];
         const gids = r.group_ids || [];
         funds.forEach((_, colIdx) => {
           const cell = values[colIdx] ?? "n.a.";
           tr.appendChild(mkTdShared2Line(cell, "p-2", gids[colIdx] ?? null, cell, false));
         });
-
         tbody.appendChild(tr);
       });
-
       const trTot = document.createElement("tr");
       trTot.appendChild(mkTd("Total", "p-2 font-semibold text-light-purple"));
       funds.forEach((_, colIdx) => {
@@ -420,55 +1174,34 @@
       const thead = document.getElementById("investee-thead");
       const tbody = document.getElementById("investee-tbody");
       clear(thead); clear(tbody);
-
       const funds = matrix?.funds || [];
       const rows = matrix?.rows || [];
-
-      // Align with Region/Country: header row is managers, left header column is "Top Investee i"
       const trh = document.createElement("tr");
       trh.appendChild(mkTd("", "p-2"));
-      funds.forEach(f => {
-        const mgr = managerMap.get(f) || f;
-        trh.appendChild(mkTd(mgr, "p-2", f));
-      });
+      funds.forEach(f => trh.appendChild(mkTd(managerMap.get(f) || f, "p-2", f)));
       thead.appendChild(trh);
-
-      // Render Top 5 investees (or fewer if Brain provides fewer)
       const wantN = 5;
       const useRows = [];
-      for (let i = 0; i < wantN; i++) {
-        useRows.push(rows[i] || { values: [], group_ids: [] });
-      }
-
-      // Totals per fund (sum of Top1..TopN that exist)
+      for (let i = 0; i < wantN; i++) useRows.push(rows[i] || { values: [], group_ids: [] });
       const totals = funds.map((_, colIdx) => {
-        let total = 0;
-        let ok = false;
+        let total = 0, ok = false;
         useRows.forEach(r => {
-          const v = (r.values || [])[colIdx] ?? "n.a.";
-          const p = pctVal(v);
+          const p = pctVal((r.values || [])[colIdx] ?? "n.a.");
           if (p != null) { total += p; ok = true; }
         });
         return ok ? fmtPct1(total) : "n.a.";
       });
-
-      // Rows
       useRows.forEach((r, rowIdx) => {
         const tr = document.createElement("tr");
         tr.appendChild(mkTd("Top Investee " + (rowIdx + 1), "p-2 opacity-80"));
-
         const values = r.values || [];
         const gids = r.group_ids || [];
         funds.forEach((_, colIdx) => {
           const cell = values[colIdx] ?? "n.a.";
-          // investees: lowercase label, 2-line cell, coloured by group_id
           tr.appendChild(mkTdShared2Line(cell, "p-2", gids[colIdx] ?? null, cell, true));
         });
-
         tbody.appendChild(tr);
       });
-
-      // Total row (LEFT aligned values)
       const trTot = document.createElement("tr");
       trTot.appendChild(mkTd("Total", "p-2 font-semibold text-light-purple"));
       funds.forEach((_, colIdx) => {
@@ -481,25 +1214,17 @@
       const thead = document.getElementById("impact-thead");
       const tbody = document.getElementById("impact-body");
       clear(thead); clear(tbody);
-
       const funds = (items || []).map(it => it.fund ?? "n.a.");
-
       const trh = document.createElement("tr");
       trh.appendChild(mkTd("", "p-2"));
-      funds.forEach(f => {
-        const mgr = managerMap.get(f) || f;
-        trh.appendChild(mkTd(mgr, "p-2", f));
-      });
+      funds.forEach(f => trh.appendChild(mkTd(managerMap.get(f) || f, "p-2", f)));
       thead.appendChild(trh);
-
-      const rows = [
+      [
         { label: "Borrowers", key: "borrowers" },
-        { label: "Loan",      key: "loan" },
-        { label: "Rural %",   key: "rural" },
-        { label: "Women %",   key: "women" }
-      ];
-
-      rows.forEach(r => {
+        { label: "Loan", key: "loan" },
+        { label: "Rural %", key: "rural" },
+        { label: "Women %", key: "women" }
+      ].forEach(r => {
         const tr = document.createElement("tr");
         tr.appendChild(mkTd(r.label, "p-2 opacity-80"));
         (items || []).forEach(it => {
@@ -509,36 +1234,210 @@
       });
     }
 
-    const p = parsePayload();
+    function monthName(iso) {
+      const [year, month] = iso.split("-").map(Number);
+      return new Date(Date.UTC(year, month - 1, 1)).toLocaleString("en-GB", { month: "long", year: "numeric", timeZone: "UTC" });
+    }
 
-    const managerMap = new Map();
-    (p.directory || []).forEach(d => {
-      if (d?.name) {
-        const m = (d.manager ?? "").trim();
-        managerMap.set(d.name, (m && m.toLowerCase() !== "n.a.") ? m : d.name);
-      }
-    });
+    function svgEl(name, attrs) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", name);
+      Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+      return el;
+    }
 
-    setText("nav-date", p.nav_date || "");
-    setText("insights-s1", p.insights_s1 || "");
-    setText("insights-s2", p.insights_s2 || "");
+    function shortMonth(iso) {
+      const [year, month] = iso.split("-").map(Number);
+      const name = new Date(Date.UTC(year, month - 1, 1)).toLocaleString("en-GB", { month: "short", timeZone: "UTC" });
+      return name + " " + String(year).slice(2);
+    }
 
-    renderDirectory(p.directory || []);
+    function aumHistory(archive) {
+      if (Array.isArray(archive.aum) && archive.aum.length) return archive.aum;
+      return (archive.months || []).map(month => ({
+        month: month.month,
+        funds: (month.directory || []).filter(d => typeof d.aum_usd_m === "number").map(d => ({
+          name: d.name, manager: d.manager, aum: d.aum, aum_usd_m: d.aum_usd_m
+        }))
+      }));
+    }
 
-    renderTwoCol("monthly-body", p.tables?.monthly?.items, p.tables?.monthly?.best_fund, "monthly");
-    renderTwoCol("ytd-body",     p.tables?.ytd?.items,     p.tables?.ytd?.best_fund,     "ytd");
-    renderTwoCol("annual-body",  p.tables?.annual?.items,  p.tables?.annual?.best_fund,  "annual");
-    renderTwoCol("vol-body",     p.tables?.vol?.items,     p.tables?.vol?.best_fund,     "vol");
-    renderTwoCol("ter-body",     p.tables?.ter?.items,     p.tables?.ter?.best_fund,     "ter");
-    renderTwoCol("wad-body",     p.tables?.wad?.items,     p.tables?.wad?.best_fund,     "wad");
+    function niceStep(span) {
+      const target = Math.max(span, 1) / 4;
+      const power = 10 ** Math.floor(Math.log10(target));
+      const fraction = target / power;
+      const nice = fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 2.5 ? 2.5 : fraction <= 5 ? 5 : 10;
+      return nice * power;
+    }
 
-    renderCashBundled(p);
-    renderDiversification(p.tables?.div?.items || []);
+    function percentAxis(values) {
+      if (!values.length) return { min: 0, max: 5, ticks: [0, 5] };
+      const lo = Math.min.apply(null, values);
+      const hi = Math.max.apply(null, values);
+      const aboveZero = lo >= 0;
+      const base = aboveZero ? 0 : lo;
+      const headroom = Math.max(hi - base, 1) * 0.12;
+      const lower = aboveZero ? 0 : lo - headroom;
+      const step = niceStep(Math.max(hi + headroom - lower, 1));
+      const min = aboveZero ? 0 : Math.floor(lower / step) * step;
+      let max = Math.ceil((hi + headroom) / step) * step;
+      if (!(max > hi)) max += step;
+      if (!(max > min)) max = min + step;
+      const count = Math.max(1, Math.round((max - min) / step));
+      const ticks = [];
+      for (let i = 0; i <= count; i++) ticks.push(Math.round((min + i * step) * 10) / 10);
+      return { min: ticks[0], max: ticks[ticks.length - 1], ticks: ticks };
+    }
 
-    renderTopRegionLike("region-thead", "region-tbody", p.tables?.regions || {}, managerMap, 3, "Top Region");
-renderTopRegionLike("country-thead", "country-tbody", p.tables?.top_country || {}, managerMap, 5, "Top Country");
-renderInvesteesAligned(p.tables?.investees || {}, managerMap);
-    renderImpact(p.tables?.impact?.items || [], managerMap);
+    function formatPercent(value) {
+      const rounded = Math.round(value * 10) / 10;
+      return (Number.isInteger(rounded) ? String(rounded) : rounded.toFixed(1)) + "%";
+    }
+
+    function formatChange(value) {
+      const rounded = Math.round(value * 10) / 10;
+      const body = Number.isInteger(rounded) ? String(Math.abs(rounded)) : Math.abs(rounded).toFixed(1);
+      if (rounded > 0) return "+" + body + "%";
+      if (rounded < 0) return "-" + body + "%";
+      return "0%";
+    }
+
+    function renderAum(archive) {
+      const svg = document.getElementById("aum-chart");
+      const thead = document.getElementById("aum-head");
+      const tbody = document.getElementById("aum-body");
+      clear(svg); clear(thead); clear(tbody);
+      const history = aumHistory(archive);
+      if (!history.length) return;
+      const latestFunds = history[history.length - 1].funds || [];
+      const order = latestFunds.map(d => d.name);
+      const percentsByName = new Map();
+      order.forEach(name => {
+        const present = [];
+        history.forEach((month, monthIndex) => {
+          const row = (month.funds || []).find(d => d.name === name);
+          if (row && typeof row.aum_usd_m === "number" && row.aum_usd_m > 0) {
+            present.push({ monthIndex: monthIndex, aum: row.aum_usd_m });
+          }
+        });
+        const earliest = present[0];
+        percentsByName.set(name, earliest ? present.map(point => ({
+          monthIndex: point.monthIndex,
+          pct: (point.aum / earliest.aum - 1) * 100
+        })) : []);
+      });
+      const selected = history.length - 1;
+      const head = document.createElement("tr");
+      head.appendChild(mkTd("Fund", "p-2"));
+      history.forEach((month, idx) => {
+        const cell = mkTd(shortMonth(month.month), "p-2 text-right tabular-nums");
+        if (idx === selected) cell.classList.add("aum-selected");
+        head.appendChild(cell);
+      });
+      thead.appendChild(head);
+      order.forEach(name => {
+        const tr = document.createElement("tr");
+        const row = latestFunds.find(d => d.name === name) || {};
+        tr.appendChild(mkTd(row.manager || name, "p-2", name));
+        const byIndex = new Map((percentsByName.get(name) || []).map(point => [point.monthIndex, point.pct]));
+        history.forEach((month, idx) => {
+          const text = byIndex.has(idx) ? formatChange(byIndex.get(idx)) : "n.a.";
+          const cell = mkTd(text, "p-2 text-right tabular-nums", text);
+          if (idx === selected) cell.classList.add("aum-selected");
+          tr.appendChild(cell);
+        });
+        tbody.appendChild(tr);
+      });
+
+      const width = 680, height = 280, left = 64, right = 16, top = 16, bottom = 36;
+      const allPct = [];
+      percentsByName.forEach(points => points.forEach(point => allPct.push(point.pct)));
+      const axis = percentAxis(allPct);
+      const plotW = width - left - right;
+      const plotH = height - top - bottom;
+      const xAt = i => history.length === 1 ? left + plotW / 2 : left + (plotW * i) / (history.length - 1);
+      const yAt = v => top + plotH - ((v - axis.min) / ((axis.max - axis.min) || 1)) * plotH;
+      svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+      svg.appendChild(svgEl("line", { x1: left, y1: top, x2: left, y2: top + plotH, stroke: "rgba(224,231,255,0.25)" }));
+      svg.appendChild(svgEl("line", { x1: left, y1: top + plotH, x2: width - right, y2: top + plotH, stroke: "rgba(224,231,255,0.25)" }));
+      axis.ticks.forEach(tick => {
+        const y = yAt(tick);
+        svg.appendChild(svgEl("line", { x1: left, y1: y, x2: width - right, y2: y, stroke: "rgba(224,231,255,0.08)" }));
+        const label = svgEl("text", { x: left - 8, y: y + 4, "text-anchor": "end", fill: "#C0A8FF", "font-size": "11" });
+        label.textContent = formatPercent(tick);
+        svg.appendChild(label);
+      });
+      history.forEach((month, idx) => {
+        const label = svgEl("text", { x: xAt(idx), y: height - 12, "text-anchor": "middle", fill: idx === selected ? "#5EEAD4" : "#C0A8FF", "font-size": "11" });
+        label.textContent = shortMonth(month.month);
+        svg.appendChild(label);
+      });
+      order.forEach(name => {
+        const color = AUM_COLORS[name] || "#E0E7FF";
+        const thick = name.startsWith("Symbiotics");
+        const points = (percentsByName.get(name) || []).map(point => [xAt(point.monthIndex), yAt(point.pct)]);
+        if (points.length >= 2) {
+          svg.appendChild(svgEl("polyline", {
+            points: points.map(p => p.join(",")).join(" "),
+            fill: "none", stroke: color, "stroke-width": thick ? 3 : 2
+          }));
+        }
+        points.forEach(([x, y]) => {
+          svg.appendChild(svgEl("circle", { cx: x, cy: y, r: thick ? 5 : 3.5, fill: color }));
+        });
+      });
+    }
+
+    function renderMonth(archive, index) {
+      const p = archive.months[index];
+      const managerMap = new Map();
+      (p.directory || []).forEach(d => {
+        if (d?.name) {
+          const m = (d.manager ?? "").trim();
+          managerMap.set(d.name, (m && m.toLowerCase() !== "n.a.") ? m : d.name);
+        }
+      });
+      setText("nav-date", p.nav_date || "");
+      setText("insights-s1", p.insights_s1 || "");
+      setText("insights-s2", p.insights_s2 || "");
+      setText("ter-note", p.ter_note || "");
+      renderDirectory(p.directory || []);
+      renderAum(archive);
+      renderTwoCol("monthly-body", p.tables?.monthly?.items, p.tables?.monthly?.best_fund, "monthly");
+      renderTwoCol("ytd-body", p.tables?.ytd?.items, p.tables?.ytd?.best_fund, "ytd");
+      renderTwoCol("annual-body", p.tables?.annual?.items, p.tables?.annual?.best_fund, "annual");
+      renderTwoCol("vol-body", p.tables?.vol?.items, p.tables?.vol?.best_fund, "vol");
+      renderTwoCol("ter-body", p.tables?.ter?.items, p.tables?.ter?.best_fund, "ter");
+      renderTwoCol("wad-body", p.tables?.wad?.items, p.tables?.wad?.best_fund, "wad");
+      renderCashBundled(p);
+      renderDiversification(p.tables?.div?.items || []);
+      renderTopRegionLike("region-thead", "region-tbody", p.tables?.regions || {}, managerMap, 3, "Top Region");
+      renderTopRegionLike("country-thead", "country-tbody", p.tables?.top_country || {}, managerMap, 5, "Top Country");
+      renderInvesteesAligned(p.tables?.investees || {}, managerMap);
+      renderImpact(p.tables?.impact?.items || [], managerMap);
+
+      const select = document.getElementById("month-select");
+      clear(select);
+      archive.months.forEach((month, idx) => {
+        const option = document.createElement("option");
+        option.value = String(idx);
+        option.textContent = monthName(month.month);
+        option.selected = idx === index;
+        select.appendChild(option);
+      });
+      document.getElementById("month-prev").disabled = index === 0;
+      document.getElementById("month-next").disabled = index === archive.months.length - 1;
+    }
+
+    const archive = parsePayload();
+    if (!archive.months) archive.months = [archive];
+    const nav = document.getElementById("month-nav");
+    if (nav) nav.hidden = archive.months.length < 2;
+    let index = archive.months.length - 1;
+    const show = (next) => { index = next; renderMonth(archive, index); };
+    document.getElementById("month-prev").addEventListener("click", () => { if (index > 0) show(index - 1); });
+    document.getElementById("month-next").addEventListener("click", () => { if (index < archive.months.length - 1) show(index + 1); });
+    document.getElementById("month-select").addEventListener("change", (event) => show(Number(event.target.value)));
+    show(index);
   })();
   </script>
 </body>
